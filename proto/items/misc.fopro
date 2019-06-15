@@ -3480,7 +3480,7 @@ Material=1
 ProtoId=601
 Type=5
 PicMap=art\scenery\pwrarmor.frm
-PicInv=art\inven\reserved.frm
+PicInv=art\scenery\pwrarmor.frm
 Flags=35131400
 DisableEgg=1
 Stackable=1
@@ -8515,7 +8515,7 @@ Material=1
 [Proto] # PID_itbltnut Строительный крепёж
 ProtoId=1784
 Type=5
-PicMap=art\items\boxbig01.frm
+PicMap=art\items\MGBOLT.FRM
 PicInv=art\inven\itbltnut.frm
 Flags=134217758
 DisableEgg=1
