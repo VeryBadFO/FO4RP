@@ -1037,6 +1037,28 @@ class GUIScreen : IGUIScreenOpt
 				RunServerScriptUnsafe("main@unsafe_swap_invis", 0, 0, 0, null, null);
 				return true;
 			}
+
+			if( !__ConsoleActive && !KeyPressed[ DIK_LCONTROL ] && !KeyPressed[ DIK_LMENU ] )
+			{
+				int[][] keybinds = {
+					{ DIK_NUMPAD0, HIT_LOCATION_NONE },
+					{ DIK_NUMPAD9, HIT_LOCATION_NONE },
+					{ DIK_NUMPAD7, HIT_LOCATION_NONE },
+					{ DIK_NUMPAD8, HIT_LOCATION_HEAD },
+					{ DIK_NUMPAD4, HIT_LOCATION_LEFT_ARM },
+					{ DIK_NUMPAD5, HIT_LOCATION_TORSO },
+					{ DIK_NUMPAD6, HIT_LOCATION_RIGHT_ARM },
+					{ DIK_NUMPAD1, HIT_LOCATION_LEFT_LEG },
+					{ DIK_NUMPAD2, HIT_LOCATION_GROIN },
+					{ DIK_NUMPAD3, HIT_LOCATION_RIGHT_LEG }
+				};
+				for( uint i = 0; i < keybinds.length(); i++ )
+					if( keybinds[i][0] == key ) 
+					{
+						RunServerScriptUnsafe( "main@unsafe_set_aim", keybinds[i][1], 0, 0, null, null );
+						return false;
+					}
+			}
 			
 			//Хоткейные анимации.
 			if( !__ConsoleActive && !KeyPressed[ DIK_LMENU ] && !KeyPressed[ DIK_LCONTROL ] )
@@ -1104,7 +1126,7 @@ class GUIScreen : IGUIScreenOpt
 					{
 						uint8 mode = 0;
 						ProtoItem@ weapon = choo.GetSlotProto( SLOT_HAND1, mode );
-						if( _WeaponSkill( weapon, mode ) == 0 )
+						if( mode == 4 )
 						{
 							ChangeCursor( CURSOR_USE_OBJECT );
 							return true;
@@ -1121,11 +1143,14 @@ class GUIScreen : IGUIScreenOpt
 				switch( key )
 				{
 					case( DIK_G ): RunServerScriptUnsafe( "test@unsafe_testBag",  0, 0, 0, null, null ); return true;
+					
 					case( DIK_A ): RunServerScriptUnsafe( "general_unsafe@unsafe_sleep", 0, 0, 0, null, null ); return true;
 					case( DIK_S ): RunServerScriptUnsafe( "general_unsafe@unsafe_sleep", 1, 0, 0, null, null ); return true;
-					case( DIK_D ): RunServerScriptUnsafe( "general_unsafe@unsafe_wringing", 0, 0, 0, null, null ); return true;
-					case( DIK_F ): RunServerScriptUnsafe( "general_unsafe@unsafe_wringing", 1, 0, 0, null, null ); return true;
+					
 					case( DIK_C ): RunServerScriptUnsafe( "general_unsafe@unsafe_pushing", 0, 0, 0, null, null ); return true;					
+					
+					case( DIK_D ): RunServerScriptUnsafe( "workout@unsafe_wringing", 0, 0, 0, null, null ); return true;
+					case( DIK_F ): RunServerScriptUnsafe( "workout@unsafe_wringing", 1, 0, 0, null, null ); return true;
 					
 					case( DIK_X ): RunServerScriptUnsafe( "debug@unsafe_mobs_calm_down", targetId, 0, 0, null, null ); return true;					
 				}

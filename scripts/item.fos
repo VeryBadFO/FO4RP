@@ -604,7 +604,7 @@ bool e_LockerKeyUse( Item& item, Critter& cr, Critter@ onCritter, Item@ onItem, 
 {
     if( valid( onItem ) )
     {
-        if( ( onItem.GetType() == ITEM_TYPE_DOOR || ItemLockedCont( onItem ) ) && onItem.Val1 == 0 && onItem.Val0 == 0 )
+        if( ( onItem.GetType() == ITEM_TYPE_DOOR || onItem.Proto.Container_Changeble ) && onItem.Val1 == 0 && onItem.Val0 == 0 )
         {
             if( _LockerIsClose( onItem ) ) /*onItem.LockerCondition == LOCKER_ISOPEN*/
             {
@@ -662,13 +662,13 @@ bool e_LockerKeyUse( Item& item, Critter& cr, Critter@ onCritter, Item@ onItem, 
             }
             else
             {
-                cr.Say( SAY_NETMSG, "Сначала закройте объект" );
+                cr.Say( SAY_NETMSG, "Сначала закройте объект." );
                 return true;
             }
         }
         else
         {
-            cr.Say( SAY_NETMSG, "Этот объект нельзя запереть" );
+            cr.Say( SAY_NETMSG, "Этот объект нельзя запереть." );
             return true;
         }
     }
@@ -2814,3 +2814,46 @@ void e_WorkplaceWalk( Item& item, Critter& cr, bool entered, uint8 dir )
         if( valid( Token2 )) DeleteItem( Token2 ); 
     }
 }
+
+
+
+// Азартные игры для котят. Мио.
+
+import void DiceAdjustment( Critter& cr, Item& targetItem ) from "mio_social";
+import void DiceUse( Critter& cr, Item& item ) from "mio_social";
+
+void _Dice( Item& item, bool firstTime )
+{
+	item.SetEvent( ITEM_EVENT_SKILL, "e_DiceInit" );
+}
+bool e_DiceInit( Item& item, Critter& cr, int skill )
+{
+	if( skill == 213 ) { DiceAdjustment( cr, item ); return true; }
+	else if( skill == -1 )
+	{
+		if( FLAG( item.Flags, ITEM_CAN_PICKUP ) ) { return false; }
+		DiceUse( cr, item );
+		return true;
+	}
+	return false;
+}
+
+import void CardsAdjustment( Critter& cr, Item& targetItem ) from "mio_social";
+import void CardsUse( Critter& cr, Item& item ) from "mio_social";
+
+void _Cards( Item& item, bool firstTime )
+{
+	item.SetEvent( ITEM_EVENT_SKILL, "e_CardsInit" );
+}
+bool e_CardsInit( Item& item, Critter& cr, int skill )
+{
+	if( skill == 213 ) { CardsAdjustment( cr, item ); return true; }
+	else if( skill == -1 )
+	{
+		if( FLAG( item.Flags, ITEM_CAN_PICKUP ) ) { return false; }
+		CardsUse( cr, item );
+		return true;
+	}
+	return false;
+}
+

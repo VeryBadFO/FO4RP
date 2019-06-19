@@ -15,6 +15,11 @@
 #include "_global_events.fos"
 #include "_ltp.fos"
 
+#define WS_UNARMED                 ( 1 )
+#define WS_MELEE                   ( 2 )
+#define WS_THROWING                ( 3 )
+#define WS_GUN                     ( 4 )
+
 // Imports
 import void InitializeGame() from "config";
 import bool OnUseExplode( Critter& cr, Item& explode, Critter@ targetCr, Item@ targetItem, Scenery@ targetScen, uint timer ) from "explode";
@@ -37,8 +42,9 @@ import void Shave( Critter& cr, Critter& onCr ) from "hair";
 
 import void WorldmapInit() from "worldmap";
 import void CombatAttack( Critter& cr, Critter@ target, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo, uint16 hexX, uint16 hexY ) from "combat";
-import bool TryRepairItem( Critter& cr, Item& item ) from "repair";
-import bool TryDisassembleItem( Critter& cr, Item& item ) from "repair";
+
+import bool AskAction( Critter& cr, Item& item ) from "repair";
+
 import bool WantedSignSet( Item& wantedSign, string& name, uint cost ) from "wanted";
 import bool IsReadableBook( uint16 pid ) from "books";
 import void TryReadBook( Critter& cr, Item& book ) from "books";
@@ -122,6 +128,13 @@ import bool e_Repair( Item& item, Critter& cr, Item@ usedItem ) from "adv_items"
 import bool Mining( Critter& cr, Item@ item, Item@ targetItem ) from "mining";
 import void InjureCritter( Critter& cr, uint dmg, uint dmgType, uint8 dir, uint attackerId ) from "combat";
 import bool SetTrapOnItem( Critter& cr, Item& trap, Item& onItem ) from "trap";
+
+// Mio import
+import void DiceUse( Critter& cr, Item& item ) from "mio_social";
+import void CardsUse( Critter& cr, Item& item ) from "mio_social";
+import void CoinUse( Critter& cr, Item& item ) from "mio_social";
+
+import void ScouringStick( Critter& cr, Item& item ) from "mio_tests";
 
 uint[] water_sources = { 2615, 2619, 2621, 2623, 2895 };
 
@@ -316,28 +329,30 @@ uint loop()
 import void hearshot( Critter& cr, ProtoItem& weapon, uint8 weaponMode ) from "rp_combat"; //Выстрелы на карте
 void 		critter_attack( Critter& cr, Critter& target, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo )
 {
+	uint8 mode = weaponMode;
 	
-	uint windupTime = GetProtoWindupTime(weapon, weaponMode, cr);
- 	if(windupTime != 0)
+	if( _WeaponModeAim( mode ) == HIT_LOCATION_NONE && _WeaponAim( weapon, mode & 0x0F ) )
+		mode = ( weaponMode & 0x0F ) + ( cr.ParamBase[CR_AUTO_AIM] << 4 );
+	
+	uint windupTime = GetProtoWindupTime(weapon, mode, cr);
+
+ 	if( windupTime != 0 )
 	{
-		uint[] vals = {cr.Id, target.Id, weapon.ProtoId, weaponMode, 0};
-		if(valid(ammo))
+		uint[] vals = { cr.Id, target.Id, weapon.ProtoId, mode, 0, 0, 0 };
+		if( valid( ammo ) )
 			vals[4] = ammo.ProtoId;
 		
-		cr.Wait(windupTime);
-		Item@ realWeapon =  _CritGetItemHand(cr);
-		cr.Action(ACTION_WINDUP, ACTION_FLAG_CHOSEN_INCLUSIVE << 12 | weaponMode, valid(realWeapon) ? realWeapon : null );
-		cr.SetAnims(COND_LIFE, 0, ANIM2_WINDUP);
+		cr.Wait( windupTime );
+		Item@ realWeapon = _CritGetItemHand(cr);
+		cr.Action(ACTION_WINDUP, ACTION_FLAG_CHOSEN_INCLUSIVE << 12 | mode, valid(realWeapon) ? realWeapon : null );
+		cr.SetAnims( COND_LIFE, 0, ANIM2_WINDUP );
 		
-		CreateTimeEvent(AFTER(REAL_MS(windupTime)), "e_DelayedAttack", vals, false);
+		CreateTimeEvent( AFTER( REAL_MS( windupTime ) ), "e_DelayedAttack", vals, false );
 	}
 	else
 	{
-    // Critter@ trg = GetCritter(target.Id);
-    // cr.TimeoutBase[ TO_AGGRESSOR ] = __FullSecond + REAL_MINUTE( 1 );
-	//hearshot( cr, weapon, weaponMode);//перенёс в совершение атаки => combat.fos
-    CombatAttack( cr, target, weapon, weaponMode, ammo, 0, 0 );
-	cr.Wait(GetProtoTime(weapon, weaponMode, cr));
+		CombatAttack( cr, target, weapon, mode, ammo, 0, 0 );
+		cr.Wait(GetProtoTime(weapon, mode, cr));
 	}
 }
 
@@ -348,21 +363,22 @@ uint e_DelayedAttack(uint[]@ values)
 	ProtoItem@ weapon = GetProtoItem(values[2]);
 	uint8 weaponMode = values[3];
 	ProtoItem@ ammo = GetProtoItem(values[4]);
+	uint hexX = values[5];
+	uint hexY = values[6];
 	
-	if(cr.IsSee(target))
+	if( valid(target) && !cr.IsSee(target) && cr.Anim2Life == ANIM2_WINDUP )
 	{
-		Item@ realWeapon =  _CritGetItemHand(cr);
-		if(GetAttackDistantion(cr, realWeapon, weaponMode) >= GetDistantion(cr.HexX, cr.HexY, target.HexX, target.HexY))
-		{
-			CombatAttack(cr, target, weapon, weaponMode, ammo, 0, 0);
-			cr.Wait(GetProtoTime(weapon, weaponMode, cr));
-		}
+		cr.SetAnims(COND_LIFE, 0, ANIM2_IDLE);
+		return 0;
 	}
-	else
+	
+	Item@ realWeapon = _CritGetItemHand(cr);
+	if( GetAttackDistantion( cr, realWeapon, weaponMode ) >= GetDistantion( cr.HexX, cr.HexY, valid(target) ? target.HexX : hexX, valid(target) ? target.HexY : hexY ) )
 	{
-		if(cr.Anim2Life == ANIM2_WINDUP)
-			cr.SetAnims(COND_LIFE, 0, ANIM2_IDLE);
+		CombatAttack( cr, target, weapon, weaponMode, ammo, hexX, hexY );
+		cr.Wait( GetProtoTime(weapon, weaponMode, cr) );
 	}
+
 	return 0;
 }
 
@@ -614,7 +630,20 @@ bool critter_use_item( Critter& cr, Item& item, Critter@ targetCr, Item@ targetI
 	cr.Wait(GetProtoTime(item.Proto, 0, cr));
 
 	if( Mining( cr, item, targetItem ) ) return true;
-	
+
+	// ================================================== Мио ==================================================
+
+	if( pid == PID_DICE )					{ DiceUse( cr, item ); return true; }
+	if( pid == PID_LOADED_DICE )			{ DiceUse( cr, item ); return true; }
+	if( pid == PID_DECK_OF_CARDS )			{ CardsUse( cr, item ); return true; }
+	if( pid == PID_MARKED_DECK_OF_CARDS )	{ CardsUse( cr, item ); return true; }
+
+	if( pid == PID_BOTTLE_CAPS )			{ CoinUse( cr, item ); return true; }
+
+	if( pid == PID_mstool )					{ ScouringStick( cr, item ); return true; }
+
+	// ================================================== --- ==================================================
+
 	if( pid == PID_RUIN_MAP )
 	{
 		if( cr.KarmaBase[ KARMA_SEPARATED ] == 0 )
@@ -1069,17 +1098,6 @@ bool critter_use_item( Critter& cr, Item& item, Critter@ targetCr, Item@ targetI
         return true;
     }
 
-    // Play dice
-    if( pid == PID_DICE )
-    {
-        cr.SayMsg( SAY_EMOTE, TEXTMSG_TEXT, STR_DICE_THROW, "$result" + Random( 1, 6 ) );
-        return true;
-    }
-    if( pid == PID_LOADED_DICE )
-    {
-        cr.SayMsg( SAY_EMOTE, TEXTMSG_TEXT, STR_DICE_THROW, "$result" + uint( ( item.Id % 6 ) + 1 ) );
-        return true;
-    }
     if( pid == PID_ACTIVE_FLARE ) //Фонарик выкл.
     {
         cr.DeleteItem( PID_ACTIVE_FLARE, 1 );
@@ -1265,8 +1283,8 @@ bool critter_use_item( Critter& cr, Item& item, Critter@ targetCr, Item@ targetI
 }
 
 
-import void Training( Critter& player, int type ) from "general_unsafe";
-import bool TryTraining( Critter& cr, uint pid ) from "general_unsafe";
+import void Training( Critter& player, int type ) from "workout";
+import bool TryTraining( Critter& cr, uint pid ) from "workout";
 #pragma bindfunc "uint Critter::GetItemTransferCount() -> fonline_tnf.dll Critter_GetItemTransferCount"
 import bool UseSkillOnTrappedItem( Item& trappedItem, Critter& cr, int skill ) from "trap";
 // //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1533,7 +1551,7 @@ bool critter_use_skill( Critter& cr, int skill, Critter@ targetCr, Item@ targetI
             // return true;
         // }
 		
-        if( valid( targetItem ) && targetItem.Accessory == ACCESSORY_CRITTER && TryDisassembleItem( cr, targetItem ) )
+        if( valid( targetItem ) && targetItem.Accessory == ACCESSORY_CRITTER && AskAction( cr, targetItem ) )
 			return true;
     break; }
     case SK_REPAIR: {
@@ -1574,20 +1592,32 @@ bool critter_use_skill( Critter& cr, int skill, Critter@ targetCr, Item@ targetI
                 StartProcess( cr, LTP_SHARP, targetItem.Id, 0, 0, 10 );
                 return true;
             }
-            else if( TryRepairItem( cr, targetItem ) )
+            else if( AskAction( cr, targetItem ) )
                 return true;
         }
     break; }
     case SK_SNEAK: {
-		if( cr.Timeout[ TO_BATTLE ] > 0 ) {
+		if( cr.Timeout[ TO_BATTLE ] > 0 ) 
+		{
 			cr.Say( SAY_EMOTE_ON_HEAD, "блок" );
 			cr.StatBase[ ST_BLOCK ] = 1;
-		} else {
-			cr.TimeoutBase[ TO_BATTLE ] = __FullSecond + REAL_SECOND(60);
-			unsafe_animation( cr, ACTION_WINDUP, 0, 0, null, null );
-			cr.Say( SAY_EMOTE, "готовится атаковать" );
+		} 
+		else 
+		{
 			cr.StatBase[ ST_BLOCK ] = 1;
 			cr.ParamBase[ ST_CURRENT_AP ] = 0;
+			cr.ParamBase[ CR_IS_WINDUPED ] = 1;
+			cr.Say( SAY_EMOTE, "готовится атаковать" );
+			cr.TimeoutBase[ TO_BATTLE ] = __FullSecond + REAL_SECOND(60);
+
+			Item@ realWeapon = _CritGetItemHand(cr);
+			ProtoItem@ weapon = valid( realWeapon ) ? GetProtoItem( realWeapon.GetProtoId() ) : null;
+			int   skillNum = ( valid( weapon ) ? _WeaponSkill( weapon, 0 ) : ( valid( realWeapon ) ? SK_MELEE_WEAPONS : SK_UNARMED ) );
+			uint8 weaponSubtype = ( skillNum == SK_SMALL_GUNS || skillNum == SK_BIG_GUNS || skillNum == SK_ENERGY_WEAPONS ) ? WS_GUN : 
+								( ( skillNum == SK_THROWING ) ? WS_THROWING : ( skillNum == SK_MELEE_WEAPONS ) ? WS_MELEE : WS_UNARMED );		
+			
+			if( weaponSubtype == WS_GUN )
+				cr.SetAnims( COND_LIFE, 0, ANIM2_WINDUP );
 		}
 		return true;
     break; }
@@ -4327,7 +4357,7 @@ void unsafe_swap_invis( Critter& cr, int, int, int, string@, int[]@ )
 {
     if( !isGM( cr ) )
 	{
-		if( !cr.IsBusy() && !cr.IsDead() )
+		if( !cr.IsBusy() && !cr.IsDead() && cr.StatBase[ST_CURRENT_HP] > 0 )
 		{
 			cr.Say( SAY_EMOTE_ON_HEAD, "присаживается" );
 			cr.Animate( 0, ANIM2_PICKUP, null, false, true );
@@ -4342,11 +4372,6 @@ void unsafe_swap_invis( Critter& cr, int, int, int, string@, int[]@ )
 	cr.Say( SAY_NETMSG, "Режим суперневидимости " + ( cr.ParamBase[ QST_INVIS ] == 1 ? "в" : "вы" ) + "ключен." );
 	//cr.PerkBase[ PE_SILENT_RUNNING ] = cr.ParamBase[ QST_INVIS ];
 }
-
-#define WS_UNARMED                 ( 1 )
-#define WS_MELEE                   ( 2 )
-#define WS_THROWING                ( 3 )
-#define WS_GUN                     ( 4 )
 
 void unsafe_animation( Critter& cr, int type, int val, int targetId, string@, int[]@ )
 {
@@ -4411,10 +4436,10 @@ void ChangeWindup( Critter& cr, bool ignore_bussy )
 		cr.Say( SAY_EMOTE_ON_HEAD, action_name );
 }
 
-//void unsafe_set_aim( Critter& cr, int aim, int, int, string@, int[]@ )
-//{
-//    cr.ParamBase[CR_AUTO_AIM] = aim;
-//}
+void unsafe_set_aim( Critter& cr, int aim, int, int, string@, int[]@ )
+{
+   cr.ParamBase[CR_AUTO_AIM] = aim;
+}
 
 void checkTime( Critter& cr, int delta_years, int style, int )
 {

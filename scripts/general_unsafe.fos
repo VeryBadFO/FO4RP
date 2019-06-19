@@ -1135,11 +1135,37 @@ void unsafe_hex_attack( Critter& player, int hexX, int hexY, int wpn_pid, string
     }
 
     Critter@ target = map.GetCritter( uint16( hexX ), uint16( hexY ) );
-
     player.StatBase[ ST_CURRENT_AP ] -= _WeaponApCost( weapon, mode ) * 100;
+
+	uint8 weaponMode = mode; //сохранил промежуточное значение
+	mode = weaponMode;
+	
+	if( _WeaponModeAim( mode ) == HIT_LOCATION_NONE && _WeaponAim( weapon, mode & 0x0F ) )
+		mode = ( weaponMode & 0x0F ) + ( player.ParamBase[CR_AUTO_AIM] << 4 );
+	
+	uint windupTime = GetProtoWindupTime(weapon, mode, player);
+
+ 	if( windupTime != 0 )
+	{
+		uint[] vals = { player.Id, valid(target) ? target.Id : 0, weapon.ProtoId, mode, 0, hexX, hexY };
+		if( valid( ammo ) )
+			vals[4] = ammo.ProtoId;
+		
+		player.Wait( windupTime );
+		Item@ realWeapon = _CritGetItemHand(player);
+		player.Action(ACTION_WINDUP, ACTION_FLAG_CHOSEN_INCLUSIVE << 12 | mode, valid(realWeapon) ? realWeapon : null );
+		player.SetAnims( COND_LIFE, 0, ANIM2_WINDUP );
+		
+		CreateTimeEvent( AFTER( REAL_MS( windupTime ) ), "main@e_DelayedAttack", vals, false );
+	}
+	else
+	{
+		CombatAttack( player, target, weapon, mode, ammo, hexX, hexY );
+		player.Wait(GetProtoTime(weapon, mode, player));
+	}	
     // HIT_LOCATION_UNCALLED
-	CombatAttack( player, target, weapon, mode, ammo, uint16( hexX ), uint16( hexY ) );
-    player.Wait( GetActionTime( ACTION_USE_WEAPON, player ) ); //20 * _WeaponApCost (weapon, mode) );//TODO: Либо перенести wait в комбататак, либо сделать проверку на прицельные прям здесь.
+	//CombatAttack( player, target, weapon, mode, ammo, uint16( hexX ), uint16( hexY ) );
+    //player.Wait( GetActionTime( ACTION_USE_WEAPON, player ) ); //20 * _WeaponApCost (weapon, mode) );//TODO: Либо перенести wait в комбататак, либо сделать проверку на прицельные прям здесь.
 }
 
 
@@ -1591,57 +1617,80 @@ void unsafe_itemhit( Critter& player, int id, int itemId, int param2, string@ pa
 
 }
 
-void unsafe_itemthrow ( Critter& player, int hx, int hy, int param2, string@ param3, int[] @ param4 ) {
+void unsafe_itemthrow ( Critter& player, int hx, int hy, int param2, string@ param3, int[] @ param4 ) 
+{
 	if( player.IsBusy() || player.Stat[ ST_CURRENT_AP ] < 50 )
+		return;
+
+	uint16 tx = hx, ty = hy;
+	uint distance = GetDistantion( player.HexX, player.HexY, hx, hy );
+	Map@ currentMap = player.GetMap ();
+
+	if( !valid(currentMap) || player.IsDead() || player.IsKnockout() || distance > player.Stat [ST_STRENGTH] * 2 ) 
 	{
+		player.Say (SAY_NETMSG, "Вы не в состоянии кидать так далеко");
 		return;
 	}
-
-	Map@ currentMap = player.GetMap ();
-	uint16 tx = hx, ty = hy;
-	uint distance = GetDistantion (player.HexX, player.HexY, hx, hy);
-	currentMap.GetHexCoord (player.HexX,  player.HexY, tx, ty,  0.0f, distance);
-	Critter@ target = currentMap.GetCritter (tx, ty);
-	if (!currentMap.IsHexPassed (tx, ty) && target is null) {
-		currentMap.GetHexCoordWall (player.HexX,  player.HexY, tx, ty,  0.0f, distance);
+	
+	if( player.Param [P_BODYSWAPPED] != 0 ) 
+	{
+		player.Say( SAY_NETMSG, "Вы пытаетесь бросить предмет, но сознание владельца тела не дает вам этого сделать." );
+		return;
 	}
+	
+	currentMap.GetHexCoord( player.HexX,  player.HexY, tx, ty,  0.0f, distance );
+	Critter@ target = currentMap.GetCritter( tx, ty );
+
+	Item@[] items;
+	Item@ container;
+	uint count = currentMap.GetItems( tx, ty, items );
+	for( uint i = 0; i < count; i++ )
+		if( items[i].GetType() == ITEM_TYPE_CONTAINER && ( !items[i].Proto.Container_Changeble || FLAG( items[i].LockerCondition, LOCKER_ISOPEN ) ) )
+		{
+			@container = @items[i];
+			break;
+		}
+
+	if( !currentMap.IsHexPassed( tx, ty ) && !valid(target) && !valid(container) )
+		currentMap.GetHexCoordWall( player.HexX,  player.HexY, tx, ty,  0.0f, distance );
+
 	Item@ itemInHand = _CritGetItemHand (player);
-	if (itemInHand is null) return;
+	if( !valid(itemInHand) ) return;
+	
 	uint pid = itemInHand.GetProtoId();
 	uint[] impossibles = { PID_HANDCUFFS_USED, PID_ROPE_USED, PID_WORKBENCH_TOKEN, PID_FIREPLACE_TOKEN };
-	if ( impossibles.find( pid ) > -1 || ( pid == PID_SANDBAG_1 && !isGM( player ) ) ) {
+	if ( impossibles.find( pid ) > -1 || ( pid == PID_SANDBAG_1 && !isGM( player ) ) ) 
+	{
 		player.Say (SAY_NETMSG, "Вы не можете бросить это.");
 		return;
 	}
 
-	bool canThrow = true;
-	
-	if (player.Param [P_BODYSWAPPED] != 0) {
-		player.Say (SAY_NETMSG, "Вы пытаетесь бросить предмет, но сознание владельца тела не дает вам этого сделать.");
-		return;
-	}
-	
-	if (!player.IsDead() && !player.IsKnockout() && distance < player.Stat [ST_STRENGTH]*2) {
-		player.SetDir( GetDirection( player.HexX, player.HexY, tx, ty ) );
-		if (valid(target) && !target.IsDead() ) {
-			bool targetFreeHands = (_CritGetItemHand (target) is null);
-			if (targetFreeHands && !(target is player) ) {
-				MoveItem (itemInHand, /*player.CountItem (itemInHand.GetProtoId())*/ 1, target);
-				target.Say (SAY_EMOTE, "Ловит предмет");
-			} else {
-				MoveItem (itemInHand, /*player.CountItem (itemInHand.GetProtoId())*/ 1, currentMap, tx, ty);
-				if (!(target is player)) target.Say (SAY_EMOTE, "Руки заняты, не может поймать предмет");
-			}
-		} else {
+	player.SetDir( GetDirection( player.HexX, player.HexY, tx, ty ) );
+	if( valid(target) && !target.IsDead() ) 
+	{
+		bool targetFreeHands = (_CritGetItemHand (target) is null);
+		if (targetFreeHands && !(target is player) ) 
+		{
+			MoveItem (itemInHand, /*player.CountItem (itemInHand.GetProtoId())*/ 1, target);
+			target.Say (SAY_EMOTE, "Ловит предмет");
+		} else 
+		{
 			MoveItem (itemInHand, /*player.CountItem (itemInHand.GetProtoId())*/ 1, currentMap, tx, ty);
+			if (!(target is player)) target.Say (SAY_EMOTE, "Руки заняты, не может поймать предмет");
 		}
-		currentMap.RunFlyEffect( _WeaponEffect( GetProtoItem(PID_FRAG_GRENADE), _WeaponModeUse (0)), player, target, player.HexX, player.HexY, tx, ty );
-		_CritAnimateThrow (player);
-		player.Wait (200 * 5 );
-		player.ParamBase[ ST_CURRENT_AP ] -= 50 * 100;
-	} else {
-		player.Say (SAY_NETMSG, "Вы не в состоянии кидать так далеко");
+	} 
+	else 
+	{
+		if( valid( container ) ) 
+			MoveItem( itemInHand, 1, container, 0 );
+		else
+			MoveItem( itemInHand, 1, currentMap, tx, ty );
 	}
+	
+	currentMap.RunFlyEffect( _WeaponEffect( GetProtoItem(PID_FRAG_GRENADE), _WeaponModeUse (0) ), player, target, player.HexX, player.HexY, tx, ty );
+	_CritAnimateThrow (player);
+	player.Wait (200 * 5 );
+	player.ParamBase[ ST_CURRENT_AP ] -= 50 * 100;
 }
 
 import void ShowInputBoxScreen( Critter& cr, string funcName, uint16 textLength, uint8 flags ) from "main";
@@ -1722,180 +1771,5 @@ void unsafe_pushing( Critter& player, int type, int param1, int param2, string@ 
 			player.Say( SAY_NETMSG, "Вы толкаете цель." );
 		else
 			player.Say( SAY_NETMSG, "Цель сопротивляется." );
-	}
-}
-
-void unsafe_wringing( Critter& player, int type, int param1, int param2, string@ param3, int[] @ param4 )
-{
-	Training( player, type );
-}
-
-import void unsafe_ChatSay( Critter& cr, int sayType, int x, int y, string@ message, int[]@ ) from "test";
-import void DIALOG_MENU( Critter& cr, string[] data ) from "gm";
-
-//import bool TryTraining( Critter& cr, uint pid ) from "general_unsafe";
-bool TryTraining( Critter& cr, uint pid ) //exported
-{
-	switch( pid )
-	{
-		case( 2533 ): 
-		case( 2534 ): 
-		case( 2535 ): 
-		case( 2536 ): Training( cr, Random( 0, 1 ) ); break;
-		case( 2537 ): Training( cr, 3 ); break;
-		case( 2538 ): 
-		case( 2539 ): 
-		case( 2540 ): Training( cr, 4 ); break;
-		case( 2541 ): Training( cr, 4 ); break;
-		case( 2542 ):
-		case( 2543 ): Training( cr, 5 ); break;
-		default:	return false;
-	}
-	return true;
-}
-
-//import void Training( Critter& player, int type ) from "general_unsafe";
-void Training( Critter& player, int type ) //exported
-{
-	if( player.IsDead() || player.IsKnockout() || player.StatBase[ ST_CURRENT_AP ] < 0 ) //Убрал временно обработку "player.IsBusy()"
-		return;
-
-	if( player.Stat[ ST_HUNGER ] < 50 || player.Stat[ ST_THRIST ] < 50 )
-	{
-		player.Say( SAY_NETMSG, "Вы слишком голодны или обезвожены, что бы тренироваться." );
-		return;
-	}
-	
-	player.Wait( 2000 );
-	player.StatBase[ ST_HUNGER ] -= Random( 0, 2 );
-	player.StatBase[ ST_THRIST ] -= Random( 0, 2 );
-	player.StatBase[ ST_DYSPNEA ] -= Random( 0, 10 ) / 7;
-	
-	float weight = CLAMP( player.ItemsWeight(), 1, player.Stat[ ST_CARRY_WEIGHT ] );
-	float power = player.Stat[ ST_STRENGTH ] + player.Stat[ ST_ENDURANCE ];
-	float difficulty = 100 * weight * ( 1.0 / player.Stat[ ST_CARRY_WEIGHT ] ); //full load == 100%
-	float AP = CLAMP( difficulty - 10 * power, 0, difficulty );
-
-	bool failed = false;
-	float range = 30 - ( difficulty - power * 5 ) * 0.25;
-	if( player.Timeout[ TO_TIREDNESS ] > __FullSecond + REAL_MINUTE( Random( 0, Random( range, range * 2 ) ) ) )
-	{
-		string[] emote = { "Пыхтит", "Сопит", "Тужится", "Отдышка", "Потеет" };
-		player.Say( SAY_EMOTE_ON_HEAD, emote[Random( 0, emote.length() - 1 )] );
-		failed = true;
-	}
-	
-	if( type < 2 ) 
-	{
-		if( player.ParamBase[ CR_VAL2 ] == 0 )
-		{
-			player.Say( SAY_EMOTE_ON_HEAD, ( type == 0 ? "Отжимается" : "Приседает" ) );
-			player.StatBase[ ST_CURRENT_AP ] = -10 * 100;
-			
-			if( type == 0 )
-				player.ToKnockout( KNOCKOUT_ANIM2_DEFAULT( false ), AP, player.HexX, player.HexY );
-			else
-				player.Action( ACTION_PICK_ITEM, 1, null );
-		}
-	}
-	else
-	{
-		string text = "тренируется";
-		switch( type )
-		{
-			case( 3 ): text = "боксирует"; 
-				player.Animate( 0, ANIM2_PUNCH_RIGHT, null, true, true );
-				player.Animate( 0, ANIM2_PUNCH_RIGHT, null, false, true );
-				player.Animate( 0, ANIM2_PUNCH_RIGHT, null, false, true );
-			break;
-			case( 4 ): text = "тренирует ноги"; 
-				player.Animate( 0, ANIM2_WALK, null, true, true );
-			break;
-			case( 5 ): text = "готовится тягать штангу"; 
-				player.Action( ACTION_PICK_ITEM, 1, null );
-				player.Say( SAY_EMOTE_ON_HEAD, "Полирует штангу" );
-				player.ParamBase[ CR_VAL2 ] = 0;
-				return;
-				//start_lifting( player );
-			break;
-			case( 6 ): text = "поднимает штангу";
-				unsafe_ChatSay( player, SAY_EMOTE_ON_HEAD, player.HexX, player.HexY, " *поднимает штангу*", null );
-				player.ParamBase[ CR_VAL0 ] += Random( 0, player.ParamBase[ CR_VAL2 ] );
-			break;
-			case( 7 ): text = "опускает штангу";
-				unsafe_ChatSay( player, SAY_EMOTE_ON_HEAD, player.HexX, player.HexY, " *опускает штангу*", null );
-				player.ParamBase[ CR_VAL0 ] += Random( -player.ParamBase[ CR_VAL2 ], 0 );
-			break;
-			case( 8 ): text = "удерживает штангу";
-				unsafe_ChatSay( player, SAY_EMOTE_ON_HEAD, player.HexX, player.HexY, " *удерживает штангу*", null );
-				player.ParamBase[ CR_VAL2 ] = CLAMP( player.ParamBase[ CR_VAL2 ] - 5, 5, 20 );
-			break;
-			case( 9 ): text = "меняет хват штанги";
-				unsafe_ChatSay( player, SAY_EMOTE_ON_HEAD, player.HexX, player.HexY, " *удерживает штангу*", null );
-				player.ParamBase[ CR_VAL2 ] = CLAMP( player.ParamBase[ CR_VAL2 ] + 5, 0, 20 );
-			break;
-			default: break;
-		}
-		player.Say( SAY_EMOTE_ON_HEAD, text );
-	}
-	
-	if( player.TimeoutBase[ TO_TIREDNESS ] < __FullSecond )
-		player.TimeoutBase[ TO_TIREDNESS ] = __FullSecond;
-	player.TimeoutBase[ TO_TIREDNESS ] += REAL_SECOND( CLAMP( difficulty - power * 3 , 1, 60 ) );
-	player.ParamBase[ CR_DIRTINESS ] += Random( 0, 2 );
-
-	if( !failed )
-		player.ParamBase[ CR_FITNESS ] += CLAMP( Random( difficulty * 0.5, difficulty ) * 0.1, 0, 100 );
-	else
-		player.Say( SAY_NETMSG, "Попытка  не удалась." );
-}
-
-uint cte_lifting( Critter& player, int identifier, uint& rate )
-{
-	if( player.ParamBase[ CR_VAL2 ] == 0 )
-		return 0;
-
-	// player.StatBase[ ST_CURRENT_AP ] = -100 * 100;
-	// player.ParamBase[ CR_VAL2 ] = 1;
-
-	rate++;
-	unsafe_ChatSay( player, SAY_EMOTE_ON_HEAD, player.HexX, player.HexY, " *" + ( rate % 2 ==  0 ? "поднимает" : "опускает" ) + " штангу*", null );
-	
-	return REAL_SECOND( Random( 3, 6 ) );
-}
-
-void start_lifting( Critter& player )
-{
-	int weight = 0;
-	string[] data = { "general_unsafe@answer_start_lifting", 
-		"Перед вами тренажёр.\nОн выставлен на вес " + weight, "Начать тренировку", "Установить вес", "Инструкция" };
-	DIALOG_MENU( player, data);
-}
-
-void answer_start_lifting( Critter& player, uint answerI, string& answerS )
-{
-	switch( answerI )
-	{
-		case( 0 ): 
-			player.Say( SAY_EMOTE, "Начинает подход" );
-			player.StatBase[ ST_CURRENT_AP ] = -100 * 100;
-			player.ToKnockout( KNOCKOUT_ANIM2_DEFAULT( true ), 100, player.HexX, player.HexY );
-			player.AddTimeEvent( "cte_lifting", REAL_SECOND(5), CTE_SLEEPING, 0 );
-			player.ParamBase[ CR_VAL0 ] = 50;
-			player.ParamBase[ CR_VAL1 ] = Random( 0, 100 );
-			player.ParamBase[ CR_VAL2 ] = 10;
-		break;
-		case( 1 ): break;
-		case( 2 ): break;
-	}
-}
-
-void answer_lifting( Critter& player, uint answerI, string& answerS )
-{
-	switch( answerI )
-	{
-		case(0): break;
-		case(1): break;
-		case(2): break;
 	}
 }
