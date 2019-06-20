@@ -47,7 +47,7 @@ void OpenCrate( Critter& player, uint type ) //exported
 	
 	CheckItems( Cont, type );
     
-	uint[] data = { player.Id, Cont.Id, type };
+	uint[] data = { player.Id, Cont.Id, type }; //changed!
 	CreateTimeEvent( __FullSecond + 1, "e_delayed_ShowContainer", data, false );
 }
 

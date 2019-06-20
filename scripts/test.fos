@@ -8,6 +8,38 @@
 import bool isGM( Critter& player ) from "gm";
 import uint GetAllPlayers( Critter@[]& crs ) from "manager";
 
+#define DIVIDER		"::"
+
+string name( uint pid )
+{
+	return DIVIDER + pid * 100 + DIVIDER;
+}
+
+string desc( uint pid, uint number = 0 )
+{
+	return DIVIDER + ( pid * 100 + 1 + number * 2 ) + DIVIDER;
+}
+
+//~run test TestTalk 0 0 0
+void TestTalk( Critter& cr, int, int, int )
+{
+	//cr.Say( SAY_NETMSG, "Started." );
+	Talk( cr, SAY_NETMSG, "Вы видите перед собой " + name( PID_ROCK ) + ". Приглядевшись внимательней, вы убеждаетесь:\n" + desc( PID_ROCK ) );
+}
+
+//void CritterSay( Critter& cr, int p0, int p1, int p2, string@ text, int[]@ data )
+void Talk( Critter& cr, int say_type, string@ text )
+{
+	//cr.Say( SAY_NETMSG, "Envoked." );
+	cr.RunClientScript( "client_main@__Talk", say_type, 0, 0, text, null );
+}
+
+void unsafe_CritterSay( Critter& cr, int say_type, int p1, int p2, string@ text, int[]@ data )
+{
+	cr.Say( say_type, text );
+	//cr.Say( SAY_NETMSG, "Finished[" + say_type + "]:\n'" + text + "'" );
+}
+
 //~run test switchDebugMode 0 0 0
 //import void switchDebugMode( Critter& cr, int, int, int ) from "test";
 void switchDebugMode( Critter& cr, int, int, int ) //exported
