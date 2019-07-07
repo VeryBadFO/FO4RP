@@ -8,36 +8,87 @@
 import bool isGM( Critter& player ) from "gm";
 import uint GetAllPlayers( Critter@[]& crs ) from "manager";
 
-#define DIVIDER		"::"
-
-string name( uint pid )
+//~run test deprecated itemID old new
+void deprecated( Critter& cr, int itemID, int old_pid, int new_pid )
 {
-	return DIVIDER + pid * 100 + DIVIDER;
+	Item@ item = GetItem( itemID );
+	if( !valid( item ) )
+		cr.Say( SAY_NETMSG, "Объект не найден!" );
+	else
+		RemoveDeprecated( item, old_pid, new_pid );
 }
 
-string desc( uint pid, uint number = 0 )
+void _InitDeprecated( Item& item, bool firstTime )
 {
-	return DIVIDER + ( pid * 100 + 1 + number * 2 ) + DIVIDER;
+	RemoveDeprecated( item );
 }
 
-//~run test TestTalk 0 0 0
-void TestTalk( Critter& cr, int, int, int )
+void RemoveDeprecated( Item& item, uint forced_old_pid = 0, uint forced_new_pid = 0 )
 {
-	//cr.Say( SAY_NETMSG, "Started." );
-	Talk( cr, SAY_NETMSG, "Вы видите перед собой " + name( PID_ROCK ) + ". Приглядевшись внимательней, вы убеждаетесь:\n" + desc( PID_ROCK ) );
-}
+	uint pid_old = item.GetProtoId();
+	string text = "Обнаружен устаревший объект (" + item.Id + "/" + pid_old + ").";
+	
+	uint[][] old_to_new = {
+		{ 20569, 592 }, //Металическая броня мутантов
+		{ 20208, 1222 }, //Кожанная броня мк3
+	};
+	
+	if( forced_new_pid != 0 && forced_old_pid != 0 )
+	{
+		uint[] forced = { forced_old_pid, forced_new_pid };
+		old_to_new.insertLast( forced );
+	}
 
-//void CritterSay( Critter& cr, int p0, int p1, int p2, string@ text, int[]@ data )
-void Talk( Critter& cr, int say_type, string@ text )
-{
-	//cr.Say( SAY_NETMSG, "Envoked." );
-	cr.RunClientScript( "client_main@__Talk", say_type, 0, 0, text, null );
-}
+	uint pid_new = 0;
+	for( uint i = 0, len = old_to_new.length(); i < len; i++ )
+		if( old_to_new[i].length() > 1 && old_to_new[i][0] == pid_old )
+		{
+			pid_new = old_to_new[i][1];
+			break;
+		}
 
-void unsafe_CritterSay( Critter& cr, int say_type, int p1, int p2, string@ text, int[]@ data )
-{
-	cr.Say( say_type, text );
-	//cr.Say( SAY_NETMSG, "Finished[" + say_type + "]:\n'" + text + "'" );
+	if( pid_new == 0 )
+		text += " Замена не найдена, объект удалён.";
+	else
+	{
+		switch( item.Accessory )
+		{
+			case( ACCESSORY_CRITTER ): { 
+				Critter@ owner = GetCritter( item.CritId );
+				if( !valid( owner ) )
+					text += "Хозяин не обнаружен, объект удалён.";
+				else 
+				{
+					Item@ result = owner.AddItem( pid_new, item.GetCount() );
+					text += " Хозяин: " + owner.Id + "(" + item.CritSlot + "): " + owner.HexX + ", " + owner.HexY + ". Замена: (" + ( valid( result ) ? result.Id : 0 ) + "/" + pid_new + ").";
+				}
+			break; }
+			case( ACCESSORY_HEX ): {
+				Map@ map = GetMap( item.MapId );
+				if( !valid( map ) ) 
+					text += "Карта не найдена, объект удалён.";
+				else
+				{
+					Item@ result = map.AddItem( item.HexX, item.HexY, pid_new, item.GetCount() );
+					text += " Местоположение: " + map.Id + ": " + item.HexX + ", " + item.HexY + ". Замена: (" + ( valid( result ) ? result.Id : 0 ) + "/" + pid_new + ").";
+				}
+			break; }
+			case( ACCESSORY_CONTAINER ): {
+				Item@ container = GetItem( item.ContainerId );
+				if( !valid( container ) )
+					text += "Контейнер-хозяин не найден, объект удалён.";
+				else
+				{
+					Item@ result = container.AddItem( pid_new, item.GetCount(), 0 );
+					text += " Контейнер: " + container.Id + ": " + container.HexX + ", " + container.HexY + ". Замена: (" + ( valid( result ) ? result.Id : 0 ) + "/" + pid_new + ").";
+				}
+			break; }
+			case( ACCESSORY_NONE ): text += "Объект 'внигде', и был удалён."; break;
+			default: break;
+		}
+	}
+	Log( text );
+	DeleteItem( item );
 }
 
 //~run test switchDebugMode 0 0 0
@@ -732,8 +783,8 @@ void SetHaron( Critter& cr, int targetID, int, int )
 	target.AddTimeEvent( "cte_HaronLoop", 0, CTE_SLEEPING, 0 );	
 }
 
-#define ALARM_FREQ		( 5 )
-#define MIN_ALARM_TIME	( 60 )
+#define ALARM_FREQ		( 15 )
+#define MIN_ALARM_TIME	( 90 )
 uint cte_HaronLoop( Critter& cr, int identifier, uint& rate ) {
 	if ( cr.IsDead() || cr.IsKnockout() ) return REAL_MINUTE( 1 );
 	
@@ -757,7 +808,7 @@ uint cte_HaronLoop( Critter& cr, int identifier, uint& rate ) {
     ::GetGameTime( __FullSecond, year, month, day, dayOfWeek, hour, minute, second );
 
 	int target_hour = 0;
-	uint[] target_hours = { 6, 11, 14, 21, 6 + 24 };
+	uint[] target_hours = { 6, 8, 10, 12, 14, 16, 18, 20, 6 + 24 };
 	for( uint i = 0; i < target_hours.length(); i++ )
 		if( target_hours[i] > hour ) {
 			target_hour = target_hours[i];
@@ -766,25 +817,34 @@ uint cte_HaronLoop( Critter& cr, int identifier, uint& rate ) {
 
 	int elapsed_time = ( 60 - minute ) + ( target_hour - hour - 1 ) * 60;
 	
-	if( elapsed_time <= ALARM_FREQ * 3 )
+	if( elapsed_time <= ALARM_FREQ )
 	{
-		cr.Say( SAY_SHOUT, "Отплываем! Все на борт!" );
-		if( elapsed_time <= ALARM_FREQ )
+		cr.Say( SAY_SHOUT_ON_HEAD, "Отплываем! Все на борт!" );
+		if( elapsed_time <= 3 )
 		{
+			cr.ParamBase[ CR_VAL3 ] = 0;
 			cr.ParamBase[ CR_VAL2 ] = 0;
 			cr.ParamBase[ CR_VAL1 ] = 0;
 			cr.ParamBase[ CR_VAL0 ] = 0;
 			TheySeeMeRolling(cr);//ТПшит всех на танкер или обратно. С питомцами.
+			return GAME_MINUTE( 5 );
 		}
 	}
 	if( elapsed_time <= MIN_ALARM_TIME )
 	{
-		cr.Say( SAY_NORM, "Пошевеливаемся! Челнок отправляется через " + elapsed_time + " минут!" );
+		float top = ( MIN_ALARM_TIME - elapsed_time ); top *= top;
+		float bottom = MIN_ALARM_TIME * MIN_ALARM_TIME;
+		cr.ParamBase[ CR_VAL3 ] += CLAMP( top * ALARM_FREQ / bottom, 1, ALARM_FREQ );
+		if( cr.Param[ CR_VAL3 ] >= ALARM_FREQ )
+		{
+			cr.Say( SAY_NORM_ON_HEAD, "Пошевеливаемся! Минут до отправления челнока: " + ( elapsed_time - 3 ) );
+			cr.ParamBase[ CR_VAL3 ] = 0;
+		}
 	}
 	else if( emote.length() > 1 )
 		cr.Say( SAY_EMOTE, emote );
 
-	return GAME_MINUTE( ALARM_FREQ );
+	return GAME_MINUTE( 1 ); //GAME_MINUTE( ALARM_FREQ + Random( -3, 3) );
 }
 
 void TestRolling( Critter& cr, int id, int, int )
@@ -1285,6 +1345,111 @@ void unsafe_MakeFurniture( Critter& player, int hash, int ProtoId, int hash2, st
 	item.Update( );
 	
 	player.Say( SAY_NETMSG, "Мебель откопирована вам в инвентарь." );
+}
+
+#define DIVIDER		"::"
+
+void unsafe_getCost( Critter& player, int itemId, int x, int y, string@ , int[]@ )
+{
+	if( !isGM( player ) )
+	{
+		player.Say( SAY_NETMSG, "Данный функционал временно недоступен обычным игрокам." );
+		return;
+	}
+	
+    if( player.IsBusy() || player.IsDead() || player.IsKnockout() ) return;
+
+	if ( player.Timeout[ TO_SK_STEAL ] > 0 )
+	{
+		player.Say( SAY_NETMSG, "Вы слишком устали, попробуйте позже." );
+		return;
+	}
+	
+	Map@ map = player.GetMap();
+	if( !valid( map ) ) return;
+	
+    uint16   hx = player.HexX, hy = player.HexY;
+    map.MoveHexByDir( hx, hy, player.Dir, 1 );
+
+	map.SetText( hx, hy, COLOR_LGRAY, ":шум:" );
+	player.TimeoutBase[ TO_SK_STEAL ] = __FullSecond + REAL_SECOND( 2 );
+	player.Animate( 0, ANIM2_PICKUP, null, true, true );
+	player.Wait( 1000 );
+
+	Item@[] loot;
+	uint count = map.GetItems( hx, hy, loot );
+	if( count == 0 ) return;
+
+	for( uint i = 0, len = loot.length(); i < len; i++ )
+		ShowItemsCost( player, loot[i] );
+}
+
+void ShowItemsCost( Critter& player, Item@ item )
+{
+	if( !valid( item ) ) return;
+	
+	int v, n;
+	uint count = 0;
+	Item@[] loot;
+	
+	if( item.GetType() != ITEM_TYPE_CONTAINER )
+	{
+		v = item.Proto.Cost;
+		n = item.GetCount();
+		Talk( player, SAY_NETMSG, "Цена [" + name( item.GetProtoId() ) + "]: " + v + " * " + n + " = " + ( v * n ) );
+		return;
+	}
+
+	count = item.GetItems( uint(-1), loot );
+
+	player.Say( SAY_NETMSG, "Внутри контейнера находится:" );
+	for( uint i = 0, len = loot.length(); i < len; i++ )
+	{
+		v = loot[i].Proto.Cost;
+		n = loot[i].GetCount();
+		Talk( player, SAY_NETMSG, i + ") [" + name( loot[i].GetProtoId() ) + "]: " + n + " * " + v + " = " + ( v * n ) );
+	}
+}
+
+//~run test getVolume id 0 0
+void getVolume( Critter& cr, int p0, int p1, int p2 )
+{
+	if( p0 == 0 ) return;
+	Item@ item = GetItem( p0 );
+	if( !valid( item ) ) return;
+	int v = item.Proto.Volume;
+	int n = item.GetCount();
+	cr.Say( SAY_NETMSG, "This is #" + item.Id + "/" + item.GetProtoId() + ": " + v + " * " + n + " = " + ( v * n ) );
+}
+
+string name( uint pid )
+{
+	return DIVIDER + pid * 100 + DIVIDER;
+}
+
+string desc( uint pid, uint number = 0 )
+{
+	return DIVIDER + ( pid * 100 + 1 + number * 2 ) + DIVIDER;
+}
+
+//~run test TestTalk 0 0 0
+void TestTalk( Critter& cr, int, int, int )
+{
+	//cr.Say( SAY_NETMSG, "Started." );
+	Talk( cr, SAY_NETMSG, "Вы видите перед собой " + name( PID_ROCK ) + ". Приглядевшись внимательней, вы убеждаетесь:\n" + desc( PID_ROCK ) );
+}
+
+void Talk( Critter& cr, int say_type, string@ text )
+{
+	//cr.Say( SAY_NETMSG, "Envoked." );
+	cr.RunClientScript( "client_main@__Talk", say_type, 0, 0, text, null );
+}
+
+//void CritterSay( Critter& cr, int p0, int p1, int p2, string@ text, int[]@ data )
+void unsafe_CritterSay( Critter& cr, int say_type, int p1, int p2, string@ text, int[]@ data )
+{
+	cr.Say( say_type, text );
+	//cr.Say( SAY_NETMSG, "Finished[" + say_type + "]:\n'" + text + "'" );
 }
 
 void unsafe_testBag( Critter& player, int itemId, int x, int y, string@ , int[]@ )

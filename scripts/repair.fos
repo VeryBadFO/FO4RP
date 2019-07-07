@@ -9,6 +9,28 @@ void ltp_init () {
 	ltp_inited = true;
 }
 
+//~run repair rest id 0 0
+void rest( Critter& cr, int id, int, int )
+{
+	if( id == 0 )
+	{
+		cr.EraseTimeEvents( CTE_TIRED );
+		cr.Say( SAY_NETMSG, "Вы отдохнули и готовы продолжать свои безумные эксперименты." );
+		return;
+	}
+
+	Critter@ target = GetCritter( id );
+	if( !valid( target ) )
+	{
+		cr.Say( SAY_NETMSG, "Цель не найдена." );
+		return;
+	}
+
+	target.EraseTimeEvents( CTE_TIRED );
+	cr.Say( SAY_NETMSG, "Целевой криттер воодувлён." );
+	target.Say( SAY_NETMSG, "На вас резко нахлынуло вдохновение. Вам очень хочется что-либо изобрести или изучить!" );
+}
+
 import void ChangeStatus( Critter& cr, uint16 status, uint8 value, bool set ) from "critter_status";
 
 bool TryRepairItem( Critter& cr, Item& item ) // Export
@@ -95,6 +117,12 @@ bool TryRepairItem( Critter& cr, Item& item ) // Export
 		parts.insertLast( PID_CRAFT_L_HIDE ); parts.insertLast( 1 );		
 		parts.insertLast( PID_METAL_LIST_MEH ); parts.insertLast( 1 );
 		break;	
+	case PID_RIOT_ARMOR:
+	    tools.insertLast( PID_WELDING );
+		tools.insertLast( PID_SUPER_TOOL_KIT );
+		parts.insertLast( PID_PB_PLATE ); parts.insertLast( 4 );
+		parts.insertLast( PID_IRON_PLATE ); parts.insertLast( 2 );
+		break;
     case PID_METAL_ARMOR:
 		tools.insertLast( PID_SLEDGEHAMMER );
 		parts.insertLast( PID_METAL_LIST_MEH ); parts.insertLast( 1 );
@@ -111,7 +139,6 @@ bool TryRepairItem( Critter& cr, Item& item ) // Export
 		
 	case PID_EKZO:
 	case PID_EKZO_2:
-	case PID_EKZO_3:
 		repair -=50;
 		tools.insertLast( PID_SUPER_TOOL_KIT );
 		tools.insertLast( PID_WELDING );
@@ -476,7 +503,7 @@ bool AskAction( Critter& cr, Item& item ) //exported
 	string[] data = { "repair@answer_Action", "Выберите действие:", "Починить", "Разобрать" };
 	if( inspectable.find( type ) != -1 )
 	{
-		data.insertLast( "Сделать чертёж" );
+		data.insertLast( "Сделать чертеж" );
 		if( isGM( cr ) )
 			data.insertLast( "Список чертежей" );
 	}
@@ -516,7 +543,8 @@ class Blueprint
 	
 	string info()
 	{
-		return "Чертёж[" + pid + "] объекта №" + original + " сложности " + difficulty + "%";
+		//return "Blueprint [" + pid + "] of #" + original + " diff " + difficulty + "%";
+		return "Чертеж [" + pid + "] объекта №" + original + " сложности " + difficulty + "%";
 	}
 	
 	bool check( Critter& cr, Item& item )
@@ -541,7 +569,7 @@ class Blueprint
 			}
 			else
 			{
-				cr.Say( SAY_NETMSG, "В ходе работы вы сломали исследуемый предмет. Но оно того стоило." );
+				cr.Say( SAY_NETMSG, "В ходе работы вы сломали исследуемый предмет, но оно того стоило!" );
 				_SubItem( item, 1 );
 			}
 			
@@ -555,7 +583,7 @@ class Blueprint
 uint cte_tired( Critter& cr, int identifier, uint& rate )
 {
 	rate--;
-	if( rate >= 0 )
+	if( rate >= 0 || rate < 255 ) //hotfixed
 		return GAME_HOUR(1);
 	
 	return 0;
@@ -576,6 +604,7 @@ void InitBlueprints()
 		.add( PID_ANACONDA, PID_bp_anaconda, 300 )
 		.add( PID_NEEDLER_PISTOL, PID_bp_injector, 400 )
 		.add( PID_PK12_GAUSS_PISTOL, PID_bp_gausspis, 600 )
+		.add( PID_223_PISTOL, PID_bp_223pistol, 400 )
 		.add( PID_10MM_SMG, PID_bp_10mmSMG, 300 )
 		.add( PID_GREASE_GUN, PID_bp_ggun, 300 )
 		.add( PID_HK_P90C, PID_bp_p90, 400 )
@@ -608,10 +637,14 @@ void InitBlueprints()
 		.add( PID_LIGHT_SUPPORT_WEAPON, PID_bp_lsw, 400 )
 		.add( PID_BOZAR, PID_bp_bozar, 500 )
 		.add( PID_3GUN_LOW, PID_bp_autocannon, 350 )
+		.add( PID_GRENADELAUNCHER, PID_bp_m32,  500 )
 		.add( PID_CATTLE_PROD, PID_bp_shocker, 350 )
 		.add( PID_POWER_FIST, PID_bp_pfist, 400 )
 		.add( PID_SUPER_SLEDGE, PID_bp_ssledge, 300 )
-		.add( PID_RIPPER, PID_bp_ripper , 400 )
+		.add( PID_RIPPER, PID_bp_ripper, 400 )
+		.add( PID_FRAG_GRENADE, PID_bp_frag_grenade, 350 )
+		.add( PID_PLASMA_GRENADE, PID_bp_plas_grenade, 400 )
+		.add( PID_PULSE_GRENADE, PID_bp_EMP_grenade, 400 )
 	;
 }
 
@@ -643,6 +676,13 @@ class Blueprints
 			uint timeleft = 0;
 			if( rates.length() > 0 ) 
 				timeleft = rates[0];
+				
+			if( timeleft > 255 )
+			{
+				cr.EraseTimeEvents( CTE_TIRED );
+				timeleft = 0;
+			}
+			
 			cr.Say( SAY_NETMSG, "Вы ещё не отдохнули до конца после прошлого раза. " + ( timeleft > 0 ? "Осталось около " + timeleft + " часов." : "Ещё немного отдыха - и можно вернуться за работу." ) );
 			return true;
 		}
@@ -650,17 +690,16 @@ class Blueprints
 		for( uint i = 0; i < list.length(); i++ )
 			if( list[i].check( cr, item ) ) return true;
 		
-		cr.Say( SAY_NETMSG, "Вы не смогли придумать способ сделать чертёж этого объекта." );
+		cr.Say( SAY_NETMSG, "Вы не смогли сделать чертёж этого предмета." );
 		return false;
 	}
 	
 	bool info( Critter& cr )
 	{
-		string result = "Список доступных чертежей:";
+		cr.Say( SAY_NETMSG, "Список доступных чертежей:" );
 		for( uint i = 0; i < list.length(); i++ )
-			result += "\n" + i + ") " + list[i].info();
+			cr.Say( SAY_NETMSG, i + ") " + list[i].info() );
 		
-		cr.Say( SAY_NETMSG, result );
 		return true;
 	}
 }

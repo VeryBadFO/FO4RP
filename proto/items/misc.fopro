@@ -343,7 +343,7 @@ Flags=134217758
 DisableEgg=1
 Weight=66
 Stackable=1
-Volume=1
+Volume=0
 SoundId=48
 Cost=100
 Material=1
@@ -1565,7 +1565,7 @@ SoundId=48
 Cost=2
 Material=2
 
-[Proto] # {Косметичка}
+[Proto] # PID_COSMETIC_CASE {Косметичка}
 ProtoId=317
 Type=5
 PicMap=art\items\smalbox2.frm
@@ -1647,7 +1647,7 @@ Volume=1
 SoundId=48
 Material=7
 
-[Proto] # {Кости (игральные кости)}
+[Proto] # PID_DICE {Кости (игральные кости)}
 ProtoId=325
 Type=5
 ScriptModule=item
@@ -1663,7 +1663,7 @@ SoundId=48
 Cost=5
 Material=2
 
-[Proto] # {Шулерские кости}
+[Proto] # PID_LOADED_DICE {Шулерские кости}
 ProtoId=326
 Type=5
 ScriptModule=item
@@ -1679,7 +1679,7 @@ SoundId=48
 Cost=20
 Material=2
 
-[Proto] # {Пасхальное яйцо}
+[Proto] # PID_EASTER_EGG {Пасхальное яйцо}
 ProtoId=327
 Type=5
 PicMap=art\items\smalbox2.frm
@@ -1693,7 +1693,7 @@ SoundId=48
 Cost=1
 Material=7
 
-[Proto] # {Волшебный бильярдный шар}
+[Proto] # PID_MAGIC_8_BALL {Волшебный бильярдный шар}
 ProtoId=328
 Type=5
 PicMap=art\items\8ball.fofrm
@@ -1707,7 +1707,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # {Мутагенная сыворотка}
+[Proto] # PID_MUTAGENIC_SYRUM {Мутагенная сыворотка}
 ProtoId=329
 Type=5
 PicMap=art\items\Inekt.frm
@@ -1720,7 +1720,7 @@ Volume=1
 SoundId=48
 Material=2
 
-[Proto] # {Кошачья лапка выпуск №5}
+[Proto] # PID_CATS_PAW_ISSUE_5 {Кошачья лапка выпуск №5}
 ProtoId=331
 Type=5
 PicMap=art\items\book.frm
@@ -1734,7 +1734,7 @@ SoundId=48
 Cost=50
 Material=7
 
-[Proto] # {Сердечные пилюли}
+[Proto] # PID_HEART_PILLS {Сердечные пилюли}
 ProtoId=333
 Type=5
 ScriptModule=item
@@ -1750,7 +1750,7 @@ SoundId=48
 Cost=50
 Material=2
 
-[Proto] # {Чемоданчик Мура}
+[Proto] # PID_MOORE_BAD_BRIEFCASE {Чемоданчик Мура}
 ProtoId=335
 Type=5
 PicMap=art\items\bcasefl.frm
@@ -1764,7 +1764,7 @@ SoundId=48
 Cost=35
 Material=7
 
-[Proto] # {Чемоданчик Мура}
+[Proto] # PID_MOORE_GOOD_BRIEFCASE {Чемоданчик Мура}
 ProtoId=336
 Type=5
 PicMap=art\items\bcasefl.frm
@@ -1778,7 +1778,7 @@ SoundId=48
 Cost=35
 Material=7
 
-[Proto] # {Голодиск Линнет}
+[Proto] # PID_LYNETTE_HOLO {Голодиск Линнет}
 ProtoId=337
 Type=5
 PicMap=art\items\holo1.FRM
@@ -1792,7 +1792,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # {Диск Вестина}
+[Proto] # PID_WESTIN_HOLO {Диск Вестина}
 ProtoId=338
 Type=5
 PicMap=art\items\holo1.FRM
@@ -1806,7 +1806,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # {Диск шпиона НКР}
+[Proto] # PID_SPY_HOLO {Диск шпиона НКР}
 ProtoId=339
 Type=5
 PicMap=art\items\holo1.FRM
@@ -1833,7 +1833,7 @@ Volume=1
 SoundId=48
 Material=7
 
-[Proto] # {Пропуск, выданный президентом}
+[Proto] # PID_PRESIDENTIAL_PASS {Пропуск, выданный президентом}
 ProtoId=341
 Type=5
 PicMap=art\items\smalbox2.frm
@@ -1845,7 +1845,7 @@ Volume=1
 SoundId=48
 Material=7
 
-[Proto] # {Значок Рейнджера}
+[Proto] # PID_RANGER_PIN {Значок Рейнджера}
 ProtoId=342
 Type=5
 PicMap=art\items\smalbox2.frm
@@ -1859,7 +1859,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # {Карта Рейнджеров}
+[Proto] # PID_RANGER_MAP {Карта Рейнджеров}
 ProtoId=343
 Type=5
 PicMap=art\items\map1.FRM
@@ -1872,7 +1872,7 @@ Volume=1
 SoundId=48
 Material=1
 
-[Proto] # {Радиодетали}
+[Proto] # PID_CRAFT_E_LAMP {Радиодетали}
 ProtoId=356
 Type=5
 PicMap=art\items\smalbox2.frm
@@ -1886,7 +1886,7 @@ SoundId=48
 Cost=3000
 Material=1
 
-[Proto] # {Двигатель робота}
+[Proto] # PID_ROBOT_MOTIVATOR {Двигатель робота}
 ProtoId=364
 Type=5
 PicMap=art\items\motor.frm
@@ -1900,7 +1900,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # {ГЭКК}
+[Proto] # PID_GECK {ГЭКК}
 ProtoId=366
 Type=5
 PicMap=art\items\geckk.frm
@@ -1913,7 +1913,7 @@ Volume=1
 SoundId=48
 Material=1
 
-[Proto] # {Карта допуска бункера (красный)}
+[Proto] # PID_V15_KEYCARD {Карта допуска бункера (красный)}
 ProtoId=373
 Type=5
 PicMap=art\items\passkey1.fofrm
@@ -1926,7 +1926,7 @@ Volume=1
 SoundId=48
 Material=1
 
-[Proto] # {Микросхемы}
+[Proto] # PID_CRAFT_E_CHIP {Микросхемы}
 ProtoId=377
 Type=5
 PicMap=art\items\v15comp.FRM
@@ -1940,7 +1940,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # {Большой набор отмычек}
+[Proto] # PID_EXP_LOCKPICK_SET {Большой набор отмычек}
 ProtoId=410
 Type=5
 PicMap=art\items\expalockpick.fofrm
@@ -1954,7 +1954,7 @@ SoundId=48
 Cost=400
 Material=1
 
-[Proto] # {Электронная отмычка мод. II}
+[Proto] # PID_ELEC_LOCKPICK_MKII {Электронная отмычка мод. II}
 ProtoId=411
 Type=5
 PicMap=art\items\elockpick2.fofrm
@@ -1968,7 +1968,7 @@ SoundId=48
 Cost=700
 Material=1
 
-[Proto] # {Масленка}
+[Proto] # PID_OIL_CAN {Масленка}
 ProtoId=412
 Type=5
 PicMap=art\items\oilcan.fofrm
@@ -1982,7 +1982,7 @@ SoundId=48
 Cost=150
 Material=1
 
-[Proto] # {Пропуск в конюшни}
+[Proto] # PID_STABLES_ID_BADGE {Пропуск в конюшни}
 ProtoId=413
 Type=5
 PicMap=art\items\smalbox2.frm
@@ -1994,10 +1994,10 @@ Volume=1
 SoundId=48
 Material=2
 
-[Proto] # {Очки}
+[Proto] # PID_SPECTACLES {Очки}
 ProtoId=415
 Type=5
-PicMap=art\items\smalbox2.frm
+PicMap=art\items\glasses_itm.fofrm
 PicInv=art\inven\glasses.frm
 Flags=134217758
 DisableEgg=1
@@ -2176,7 +2176,7 @@ Volume=1
 SoundId=48
 Material=7
 
-[Proto] # {Биогель}
+[Proto] # PID_BIO_GEL {Биогель}
 ProtoId=440
 Type=5
 PicMap=art\items\jar.frm
@@ -2959,7 +2959,7 @@ PicInv=art\inven\gunpowder.frm
 Flags=134217758
 DisableEgg=1
 Stackable=1
-Weight=321
+Weight=30
 Volume=1
 SoundId=48
 Cost=250
@@ -3901,7 +3901,7 @@ Material=1
 [Proto] # PID_WELDING_GLASSES {Очки сварщика}
 ProtoId=831
 Type=5
-PicMap=art\items\sunglass.fofrm
+PicMap=art\items\can_glasses_itm.fofrm
 PicInv=art\inven\can_glasses.png
 Flags=134217758
 Stackable=1
@@ -4892,6 +4892,66 @@ Volume=1
 SoundId=48
 Material=1
 
+[Proto] # {PID_ZAPLATKA_CRAFT_SMG}
+ProtoId=1306
+Type=5
+PicMap=art\items\smalbox2.frm
+PicInv=art\inven\nixon.frm
+Flags=134217758
+DisableEgg=1
+Stackable=1
+Volume=1
+SoundId=48
+Material=7
+
+[Proto] # {PID_ZAPLATKA_CRAFT_RIFLES}
+ProtoId=1307
+Type=5
+PicMap=art\items\smalbox2.frm
+PicInv=art\inven\nixon.frm
+Flags=134217758
+DisableEgg=1
+Stackable=1
+Volume=1
+SoundId=48
+Material=7
+
+[Proto] # {PID_ZAPLATKA_CRAFT_SHOTGUNS}
+ProtoId=1308
+Type=5
+PicMap=art\items\smalbox2.frm
+PicInv=art\inven\nixon.frm
+Flags=134217758
+DisableEgg=1
+Stackable=1
+Volume=1
+SoundId=48
+Material=7
+
+[Proto] # {PID_ZAPLATKA_CRAFT_MELEE}
+ProtoId=1309
+Type=5
+PicMap=art\items\smalbox2.frm
+PicInv=art\inven\nixon.frm
+Flags=134217758
+DisableEgg=1
+Stackable=1
+Volume=1
+SoundId=48
+Material=7
+
+[Proto] # {PID_ZAPLATKA_CRAFT_THROWING}
+ProtoId=1310
+Type=5
+PicMap=art\items\smalbox2.frm
+PicInv=art\inven\nixon.frm
+Flags=134217758
+DisableEgg=1
+Stackable=1
+Volume=1
+SoundId=48
+Material=7
+
 [Proto] # {Входной билет}
 ProtoId=1314
 Type=5
@@ -4916,7 +4976,7 @@ Flags=134217758
 DisableEgg=1
 Weight=506
 SoundId=48
-Cost=1
+Cost=100
 Material=1
 
 [Proto] # {Замок мк 2}
@@ -4930,7 +4990,7 @@ Flags=134217758
 DisableEgg=1
 Weight=332
 SoundId=48
-Cost=1
+Cost=500
 Material=1
 
 [Proto] # {Замок мк 3}
@@ -4944,7 +5004,7 @@ Flags=134217758
 DisableEgg=1
 Weight=621
 SoundId=48
-Cost=1
+Cost=1000
 Material=1
 
 [Proto] # {Анестетик}
@@ -4956,7 +5016,7 @@ Flags=150994974
 DisableEgg=1
 Stackable=1
 Weight=100
-Volume=1
+Volume=0
 SoundId=48
 Cost=70
 Material=1
@@ -4970,7 +5030,7 @@ Flags=150994974
 DisableEgg=1
 Stackable=1
 Weight=20
-Volume=1
+Volume=0
 SoundId=48
 Cost=10
 Material=1
@@ -4984,7 +5044,7 @@ Flags=150994974
 DisableEgg=1
 Stackable=1
 Weight=120
-Volume=1
+Volume=0
 SoundId=48
 Cost=100
 Material=1
@@ -4998,7 +5058,7 @@ Flags=150994974
 DisableEgg=1
 Stackable=1
 Weight=300
-Volume=1
+Volume=0
 SoundId=48
 Cost=120
 Material=1
@@ -5058,7 +5118,7 @@ Weight=4000
 [Proto] # PID_MOTOGLES {Мотоциклетные очки}
 ProtoId=1398
 Type=5
-PicMap=art\items\smalbox2.frm
+PicMap=art\items\moto_itm.fofrm
 PicInv=art\inven\moto.png
 Flags=134217756
 Stackable=1
@@ -5126,7 +5186,7 @@ SoundId=48
 Cost=280
 Material=1
 
-[Proto] # {Железа}
+[Proto] # {Железа мутанта}
 ProtoId=1443
 Type=5
 PicMap=art\items\smalbox2.frm
@@ -5366,7 +5426,7 @@ Material=1
 [Proto] # {Железный брус}
 ProtoId=1474
 Type=5
-PicMap=art\items\smalbox2.frm
+PicMap=art\items\iron_bar_ITM.png
 PicInv=art\inven\iron_bar.png
 Flags=150994974
 DisableEgg=1
@@ -6225,7 +6285,7 @@ Type=5
 ScriptModule=item
 ScriptFunc=_PillsInit
 PicMap=art\items\radx2.fofrm
-PicInv=art\inven\heartpil.frm
+PicInv=art\inven\ANTIVIRUS.png
 Flags=402653214
 Weight=453
 DisableEgg=1
@@ -7565,7 +7625,7 @@ SoundId=48
 Cost=1
 Material=1
 
-[Proto] # PID_fishkaA Фишки1
+[Proto] # PID_fishkaA {Фишки1}
 ProtoId=1704
 Type=5
 PicMap=art\items\BAG.FRM
@@ -7579,7 +7639,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_fishkaB Фишки2
+[Proto] # PID_fishkaB {Фишки2}
 ProtoId=1705
 Type=5
 PicMap=art\items\BAG.FRM
@@ -7593,7 +7653,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_fishkaC Фишки3
+[Proto] # PID_fishkaC {Фишки3}
 ProtoId=1706
 Type=5
 PicMap=art\items\BAG.FRM
@@ -7607,7 +7667,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_fishkaD Фишки4
+[Proto] # PID_fishkaD {Фишки4}
 ProtoId=1707
 Type=5
 PicMap=art\items\BAG.FRM
@@ -7621,7 +7681,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_fishkaE Фишки5
+[Proto] # PID_fishkaE {Фишки5}
 ProtoId=1708
 Type=5
 PicMap=art\items\BAG.FRM
@@ -7635,7 +7695,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_FLASKB Фляжка простая
+[Proto] # PID_FLASKB {Фляжка простая}
 ProtoId=1709
 Type=5
 PicMap=art\items\Ztank1.FRM
@@ -7691,7 +7751,7 @@ SoundId=48
 Cost=1000
 Material=1
 
-[Proto] # PID_FPSHL6 Мыло душистое
+[Proto] # PID_FPSHL6 {Мыло душистое}
 ProtoId=1715
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -7700,12 +7760,12 @@ Flags=402653214
 DisableEgg=1
 Stackable=1
 Weight=200
-Volume=3
+Volume=0
 SoundId=48
 Cost=100
 Material=1
 
-[Proto] # PID_FPSHL7 Специи
+[Proto] # PID_FPSHL7 {Специи}
 ProtoId=1716
 Type=5
 PicMap=art\items\ccels_low.FRM
@@ -7714,12 +7774,12 @@ Flags=134217758
 DisableEgg=1
 Stackable=1
 Weight=300
-Volume=3
+Volume=1
 SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_FPSHL9 Соль
+[Proto] # PID_FPSHL9 {Соль}
 ProtoId=1717
 Type=5
 PicMap=art\items\ScrapMetal03.FRM
@@ -7733,7 +7793,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_FSCALPL Скальпель
+[Proto] # PID_FSCALPL {Скальпель}
 ProtoId=1718
 Type=5
 PicMap=art\items\ScrapSpike03.fofrm
@@ -7747,7 +7807,7 @@ SoundId=48
 Cost=20
 Material=1
 
-[Proto] # PID_FSHMPN Чистищее средство
+[Proto] # PID_FSHMPN {Чистищее средство}
 ProtoId=1719
 Type=5
 PicMap=art\items\Ztank1.FRM
@@ -7761,7 +7821,7 @@ SoundId=48
 Cost=40
 Material=1
 
-[Proto] # PID_FSLVShk Мощный рабский ошейник
+[Proto] # PID_FSLVShk {Мощный рабский ошейник}
 ProtoId=1720
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -7775,7 +7835,7 @@ SoundId=48
 Cost=350
 Material=7
 
-[Proto] # PID_GAME Довоенная игра
+[Proto] # PID_GAME {Довоенная игра}
 ProtoId=1721
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -7789,7 +7849,7 @@ SoundId=48
 Cost=25
 Material=1
 
-[Proto] # PID_GLASS Модные очки
+[Proto] # PID_GLASS {Модные очки}
 ProtoId=1722
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -7803,7 +7863,7 @@ SoundId=48
 Cost=100
 Material=1
 
-[Proto] # PID_hndshtpr Штопор
+[Proto] # PID_hndshtpr {Штопор}
 ProtoId=1723
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -7817,7 +7877,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_humnmeat Человеческое мясо
+[Proto] # PID_humnmeat {Человеческое мясо}
 ProtoId=1724
 Type=16
 PicMap=art\items\raw_meat_floor.png
@@ -7832,7 +7892,7 @@ Material=7
 Food_Restore=9
 Food_Flags=2
 
-[Proto] # PID_HYPO02 Шприц для пункций
+[Proto] # PID_HYPO02 {Шприц для пункций}
 ProtoId=1725
 Type=5
 PicMap=art\items\drugs\hypo.fofrm
@@ -7846,7 +7906,7 @@ SoundId=48
 Cost=60
 Material=1
 
-[Proto] # PID_itballs2 Шарики для снятия стресса
+[Proto] # PID_itballs2 {Шарики для снятия стресса}
 ProtoId=1726
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -7860,7 +7920,7 @@ SoundId=48
 Cost=45
 Material=1
 
-[Proto] # PID_itcomb01 Расчёска
+[Proto] # PID_itcomb01 {Расчёска}
 ProtoId=1728
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -7887,6 +7947,11 @@ Volume=3
 SoundId=48
 Cost=50
 Material=1
+Ammo_Caliber=22
+Ammo_AcMod=5
+Ammo_DrMod=0
+Ammo_DmgMult=5
+Ammo_DmgDiv=5
 
 [Proto] # PID_itgloves {Перчатки для грязных дел}
 ProtoId=1730
@@ -7944,7 +8009,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_itplate3 Чистая миска
+[Proto] # PID_itplate3 {Чистая миска}
 ProtoId=1734
 Type=5
 PicMap=art\items\zplate.frm
@@ -7958,7 +8023,7 @@ SoundId=48
 Cost=2
 Material=1
 
-[Proto] # PID_itrvlvbr Оружейные детали
+[Proto] # PID_itrvlvbr {Оружейные детали}
 ProtoId=1735
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -7972,7 +8037,7 @@ SoundId=48
 Cost=150
 Material=1
 
-[Proto] # ID_itscrew1 Отвёртка
+[Proto] # ID_itscrew1 {Отвёртка}
 ProtoId=1736
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -7981,12 +8046,12 @@ Flags=134217758
 DisableEgg=1
 Stackable=1
 Weight=300
-Volume=3
+Volume=0
 SoundId=48
 Cost=80
 Material=1
 
-[Proto] # PID_itsoap01 Мыло хозяйственное
+[Proto] # PID_itsoap01 {Мыло хозяйственное}
 ProtoId=1737
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -7995,12 +8060,12 @@ Flags=402653214
 DisableEgg=1
 Stackable=1
 Weight=250
-Volume=3
+Volume=0
 SoundId=48
 Cost=50
 Material=1
 
-[Proto] # PID_itstopka Чекушка/стопка/стакан из металла
+[Proto] # PID_itstopka {Чекушка/стопка/стакан из металла}
 ProtoId=1738
 Type=5
 PicMap=art\items\JAR.FRM
@@ -8014,7 +8079,7 @@ SoundId=48
 Cost=25
 Material=1
 
-[Proto] # PID_ittmpon1 Печать компании
+[Proto] # PID_ittmpon1 {Печать компании}
 ProtoId=1739
 Type=5
 PicMap=art\items\boxbig04.frm
@@ -8028,7 +8093,7 @@ SoundId=48
 Cost=1
 Material=1
 
-[Proto] # PID_ittool02 Технологичная отвёртка
+[Proto] # PID_ittool02 {Технологичная отвёртка}
 ProtoId=1740
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -8042,7 +8107,7 @@ SoundId=48
 Cost=250
 Material=1
 
-[Proto] # PID_KAIF Растительный наркотик 
+[Proto] # PID_KAIF {Растительный наркотик}
 ProtoId=1741
 Type=2
 PicMap=art\items\zmedicin.frm
@@ -8056,7 +8121,7 @@ SoundId=48
 Cost=250
 Material=1
 
-[Proto] # PID_KEY2 Технологичный магнитный ключ
+[Proto] # PID_KEY2 {Технологичный магнитный ключ}
 ProtoId=1743
 Type=7
 PicMap=art\items\zammo.frm
@@ -8070,7 +8135,7 @@ SoundId=48
 Cost=1
 Material=1
 
-[Proto] # PID_key6 Технологичный радио ключ с применением статистического кода
+[Proto] # PID_key6 {Технологичный радио ключ с применением статистического кода}
 ProtoId=1744
 Type=7
 PicMap=art\items\zammo.frm
@@ -8084,7 +8149,7 @@ SoundId=48
 Cost=1
 Material=1
 
-[Proto] # PID_KeyDumba Пластиковая карта доступа
+[Proto] # PID_KeyDumba {Пластиковая карта доступа}
 ProtoId=1745
 Type=7
 PicMap=art\items\zammo.frm
@@ -8098,7 +8163,7 @@ SoundId=48
 Cost=1
 Material=1
 
-[Proto] # PID_KeyWind Ключ от сейфа
+[Proto] # PID_KeyWind {Ключ от сейфа}
 ProtoId=1746
 Type=7
 PicMap=art\items\boxsml04.frm
@@ -8154,7 +8219,7 @@ SoundId=48
 Cost=100
 Material=1
 
-[Proto] # PID_MELASSA Молоко
+[Proto] # PID_MELASSA {Молоко}
 ProtoId=1751
 Type=2
 PicMap=art\items\ScrapMetal03.FRM
@@ -8169,7 +8234,7 @@ Cost=35
 Food_Thrist=20
 Food_Restore=1
 
-[Proto] # PID_MEMORY Компьютерная память
+[Proto] # PID_MEMORY {Компьютерная память}
 ProtoId=1752
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -8183,7 +8248,7 @@ SoundId=48
 Cost=500
 Material=1
 
-[Proto] # PID_MilkBrhm Походная фляжка
+[Proto] # PID_MilkBrhm {Походная фляжка}
 ProtoId=1754
 Type=5
 PicMap=art\items\ScrapMetal03.FRM
@@ -8197,7 +8262,7 @@ SoundId=48
 Cost=100
 Material=1
 
-[Proto] # PID_pelt3 Редкая шкура уникального ГЕККО
+[Proto] # PID_pelt3 {Редкая шкура уникального ГЕККО}
 ProtoId=1755
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -8211,7 +8276,7 @@ SoundId=48
 Cost=1000
 Material=1
 
-[Proto] # PID_PIPBOY ПипБой 2000
+[Proto] # PID_PIPBOY {ПипБой 2000}
 ProtoId=1756
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -8225,7 +8290,7 @@ SoundId=48
 Cost=2000
 Material=1
 
-[Proto] # PID_plkclef1 Разводной ключ
+[Proto] # PID_plkclef1 {Разводной ключ}
 ProtoId=1758
 Type=7
 PicMap=art\items\itfomka.frm
@@ -8239,7 +8304,7 @@ SoundId=48
 Cost=75
 Material=1
 
-[Proto] # PID_plkligt1 Удобный фонарик
+[Proto] # PID_plkligt1 {Удобный фонарик}
 ProtoId=1759
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -8253,7 +8318,7 @@ SoundId=48
 Cost=150
 Material=1
 
-[Proto] # PID_plkmltk1 Молоток
+[Proto] # PID_plkmltk1 {Молоток с шаровым бойком}
 ProtoId=1760
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -8267,7 +8332,7 @@ SoundId=48
 Cost=100
 Material=1
 
-[Proto] # PID_PorpSigr ПортСигар
+[Proto] # PID_PorpSigr {Портсигар}
 ProtoId=1761
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -8281,7 +8346,7 @@ SoundId=48
 Cost=350
 Material=1
 
-[Proto] # PID_prdhrntl Конденсатор 
+[Proto] # PID_prdhrntl {Конденсатор}
 ProtoId=1763
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -8295,7 +8360,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # PID_PRES_KEY Ключ-карта сотрудника
+[Proto] # PID_PRES_KEY {Ключ-карта сотрудника}
 ProtoId=1764
 Type=7
 PicMap=art\items\zammo.frm
@@ -8309,7 +8374,7 @@ SoundId=48
 Cost=1
 Material=1
 
-[Proto] # PID_strbox Пакет с товаром
+[Proto] # PID_strbox {Пакет с товаром}
 ProtoId=1765
 Type=5
 PicMap=art\items\fBoss.FRM
@@ -8323,7 +8388,7 @@ SoundId=48
 Cost=1
 Material=1
 
-[Proto] # PID_STRING Струна для убийства
+[Proto] # PID_STRING {Струна для убийства}
 ProtoId=1766
 Type=5
 PicMap=art\items\boxsml04.frm
@@ -8337,7 +8402,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # PID_sugar Сахар
+[Proto] # PID_sugar {Сахар}
 ProtoId=1768
 Type=5
 PicMap=art\items\ScrapMetal03.FRM
@@ -8351,7 +8416,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # PID_tross Трос с крюком
+[Proto] # PID_tross {Трос с крюком}
 ProtoId=1769
 Type=5
 PicMap=art\items\itrope.frm
@@ -8365,7 +8430,7 @@ SoundId=48
 Cost=150
 Material=1
 
-[Proto] # PID_TRUBA Музыкальный инструмент - Труба
+[Proto] # PID_TRUBA {Музыкальный инструмент - Труба}
 ProtoId=1770
 Type=5
 PicMap=art\items\TRUBA.FRM
@@ -8379,7 +8444,7 @@ SoundId=48
 Cost=650
 Material=1
 
-[Proto] # PID_CABEL Детали Кабель
+[Proto] # PID_CABEL {Детали Кабель}
 ProtoId=1771
 Type=5
 PicMap=art\items\itrope.frm
@@ -8393,7 +8458,7 @@ SoundId=48
 Cost=250
 Material=1
 
-[Proto] # PID_CARSLR Детали часов
+[Proto] # PID_CARSLR {Детали часов}
 ProtoId=1772
 Type=5
 PicMap=art\items\itmoney.frm
@@ -9174,20 +9239,21 @@ ScriptModule=adv_items
 ScriptFunc=_InitItem
 PicMap=art\items\fireplace.fofrm
 PicInv=art\items\fireplace.fofrm
-Flags=268488734
+Flags=268496926
 DisableEgg=1
 SoundId=48
 Material=3
 LightDistance=6
 LightIntensity=50
 LightColor=-16777216
-AnimWaitBase=100
+AnimWaitBase=1000
 AnimStay_0=1
-AnimStay_1=1
+AnimStay_1=2
 AnimShow_0=1
-AnimShow_1=1
+AnimShow_1=2
 AnimHide_0=1
-AnimHide_1=1
+AnimHide_1=2
+StartValue_2=1
 
 [Proto] # {Колодец}
 ProtoId=7902
@@ -9367,6 +9433,28 @@ Weight=50000
 Volume=20
 SoundId=48
 Material=1
+
+[Proto] # {Потухший Костёр}
+ProtoId=7911
+Type=5
+ScriptModule=adv_items
+ScriptFunc=_InitItem
+PicMap=art\items\fireplace.fofrm
+PicInv=art\items\fireplace.fofrm
+Flags=268488734
+DisableEgg=1
+SoundId=48
+Material=3
+LightDistance=0
+LightIntensity=0
+LightColor=0
+AnimWaitBase=100
+AnimStay_0=0
+AnimStay_1=0
+AnimShow_0=0
+AnimShow_1=0
+AnimHide_0=0
+AnimHide_1=0
 
 [Proto] # {Груда булыжников}
 ProtoId=8003
@@ -9674,7 +9762,7 @@ Material=1
 [Proto] # {Зеркальные темные очки}
 ProtoId=15069
 Type=5
-PicMap=art\items\sunglass.fofrm
+PicMap=art\items\glassesbl_itm.fofrm
 PicInv=art\inven\glassesbl.png
 Flags=134217758
 DisableEgg=1
@@ -10173,7 +10261,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # Кулинарный рецепт
+[Proto] # {Кулинарный рецепт}
 ProtoId=15041
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10187,7 +10275,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Рецепт химических веществ
+[Proto] # {Рецепт химических веществ}
 ProtoId=15042
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10201,7 +10289,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Рецепт наркотических веществ
+[Proto] # {Рецепт наркотических веществ}
 ProtoId=15043
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10215,7 +10303,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Рецепт лекарств
+[Proto] # {Рецепт лекарств}
 ProtoId=15044
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10229,7 +10317,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Чертежи патронов
+[Proto] # {Чертежи патронов}
 ProtoId=15045
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10243,7 +10331,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Чертежи брони
+[Proto] # {Чертежи брони}
 ProtoId=15046
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10257,7 +10345,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Чертежи тяжелого оружия
+[Proto] # {Чертежи тяжелого оружия}
 ProtoId=15047
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10271,7 +10359,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Чертежи энергетического оружия
+[Proto] # {Чертежи энергетического оружия}
 ProtoId=15048
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10285,7 +10373,7 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Чертежи лёгкого оружия
+[Proto] # {Чертежи лёгкого оружия}
 ProtoId=15049
 Type=5
 PicMap=art\items\boxbig01.frm
@@ -10299,10 +10387,10 @@ SoundId=48
 Cost=200
 Material=1
 
-[Proto] # Медная руда
+[Proto] # PID_bgrock {Медная руда}
 ProtoId=15050
 Type=5
-PicMap=art\items\rock.frm
+PicMap=art\items\bgrock_itm.png
 PicInv=art\inven\bgrock.frm
 Flags=134217758
 DisableEgg=1
@@ -10313,10 +10401,10 @@ SoundId=48
 Cost=100
 Material=5
 
-[Proto] # Никелевая руда
+[Proto] # PID_METAL_ORE_MK2 {Никелевая руда}
 ProtoId=15051
 Type=5
-PicMap=art\items\rock.frm
+PicMap=art\items\PID_METAL_ORE_MK2_ITM.png
 PicInv=art\inven\PID_METAL_ORE_MK2.png
 Flags=134217758
 DisableEgg=1
@@ -10327,10 +10415,10 @@ SoundId=48
 Cost=100
 Material=5
 
-[Proto] # Большой золотой самородок
+[Proto] # PID_gold21 {Золотая руда}
 ProtoId=15052
 Type=5
-PicMap=art\items\rock.frm
+PicMap=art\items\gold21_ITM.png
 PicInv=art\inven\gold21.frm
 Flags=134217758
 DisableEgg=1
@@ -10341,7 +10429,7 @@ SoundId=48
 Cost=100
 Material=5
 
-[Proto] # Спрей против паразитов
+[Proto] # {Спрей против паразитов}
 ProtoId=15053
 Type=5
 PicMap=art\items\JAR.FRM
@@ -10355,7 +10443,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # Цепь с крюком
+[Proto] # {Цепь с крюком}
 ProtoId=15054
 Type=5
 PicMap=art\items\chain.FRM
@@ -10369,7 +10457,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # Панель управления
+[Proto] # {Панель управления}
 ProtoId=15055
 Type=5
 PicMap=art\items\techJunk05.FRM
@@ -10383,7 +10471,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # Промышленное топливо
+[Proto] # {Промышленное топливо}
 ProtoId=15056
 Type=5
 PicMap=art\items\itbarrel.frm
@@ -10397,7 +10485,7 @@ SoundId=48
 Cost=1000
 Material=1
 
-[Proto] # Плазменный генератор
+[Proto] # {Плазменный генератор}
 ProtoId=15057
 Type=5
 PicMap=art\items\boxsml07.FRM
@@ -10411,7 +10499,7 @@ SoundId=48
 Cost=10000
 Material=1
 
-[Proto] # Бутылка с грязной водой
+[Proto] # {Бутылка с грязной водой}
 ProtoId=15058
 Type=5
 PicMap=art\items\zbottle.frm
@@ -10425,7 +10513,7 @@ SoundId=48
 Cost=2
 Material=1
 
-[Proto] # Сухие травы
+[Proto] # {Сухие травы}
 ProtoId=15059
 Type=5
 PicMap=art\items\BAG.FRM
@@ -10439,7 +10527,7 @@ SoundId=48
 Cost=10
 Material=1
 
-[Proto] # Память робота
+[Proto] # {Память робота}
 ProtoId=15060
 Type=5
 PicMap=art\items\CHIP.FRM
@@ -10605,7 +10693,7 @@ Material=1
 [Proto] # {Уголь}
 ProtoId=15083
 Type=5
-PicMap=art\items\rock.frm
+PicMap=art\items\coal_itm.png
 PicInv=art\inven\coal.png
 Flags=150994974
 DisableEgg=1
@@ -10616,24 +10704,24 @@ Cost=5
 SoundId=48
 Material=3
 
-[Proto] # {Медная руда}
+[Proto] # PID_COPPER_ORE {Медный самородок}
 ProtoId=15084
 Type=5
-PicMap=art\items\rock.frm
+PicMap=art\items\Copper_ore_ITM.png
 PicInv=art\inven\Copper_ore.png
 Flags=134217758
 DisableEgg=1
 Stackable=1
-Weight=80000
+Weight=4535
 Volume=2
 SoundId=48
 Cost=100
 Material=5
 
-[Proto] # {Медный брус}
+[Proto] # PID_COPPER_BAR {Медный брус}
 ProtoId=15085
 Type=5
-PicMap=art\items\smalbox2.frm
+PicMap=art\items\Copper_ingot_ITM.png
 PicInv=art\inven\Copper_ingot.png
 Flags=150994974
 DisableEgg=1
@@ -10644,10 +10732,10 @@ SoundId=48
 Cost=100
 Material=1
 
-[Proto] # Рулон листа меди
+[Proto] # PID_COPPER_LEAF {Рулон листа меди}
 ProtoId=15086
 Type=5
-PicMap=art\items\smalbox2.frm
+PicMap=art\items\Copper_sheet_ITM.png
 PicInv=art\inven\Copper_sheet.png
 Flags=134217758
 DisableEgg=1
@@ -10658,10 +10746,10 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # Моток медной проволоки
+[Proto] # PID_COPPER_WIRE {Моток медной проволоки}
 ProtoId=15087
 Type=5
-PicMap=art\items\smalbox2.frm
+PicMap=art\items\Coppercoil_ITM.png
 PicInv=art\inven\Copper_coil.png
 Flags=134217758
 DisableEgg=1
@@ -10700,7 +10788,7 @@ SoundId=48
 Cost=50
 Material=1
 
-[Proto] # {Электронный мусор}
+[Proto] # PID_MPARTS {Электронный мусор}
 ProtoId=15090
 Type=5
 PicMap=art\items\smalbox2.frm
@@ -11762,6 +11850,101 @@ Weight=450
 Volume=3
 SoundId=48
 Cost=200
+Material=1
+
+[Proto] # PID_ZOLA {Зола}
+ProtoId=22066
+Type=5
+PicMap=art\scenery\popel03.frm
+PicInv=art\inven\zola.frm
+Flags=134217758
+DisableEgg=1
+Stackable=1
+Weight=25
+Volume=1
+SoundId=48
+Material=7
+
+[Proto] # PID_RBTRHAND {Манипулятор робота}
+ProtoId=22067
+Type=5
+PicMap=art\items\smalbox2.frm
+PicInv=art\inven\rbtrhand.frm
+Flags=134217758
+DisableEgg=1
+Stackable=1
+Weight=2750
+Volume=4
+SoundId=48
+Cost=600
+Material=1
+
+[Proto] # PID_card2b {Ключь карта}
+ProtoId=22068
+Type=5
+PicMap=art\items\smalbox2.frm
+PicInv=art\inven\card2b.frm
+Flags=150994974
+DisableEgg=1
+Stackable=1
+Weight=256
+Volume=1
+SoundId=48
+Cost=25
+Material=1
+
+[Proto] # PID_GUNSMITH {Набор для чистки оружия (wpnDtls0.frm)}
+ProtoId=22069
+Type=5
+PicMap=art\items\repkit1g.FRM
+PicInv=art\inven\repkit1i.frm
+Flags=150994974
+DisableEgg=1
+Stackable=1
+Weight=225
+Volume=1
+SoundId=48
+Cost=475
+Material=1
+
+[Proto] # PID_UDOBRENI {Мешок с удобрением}
+ProtoId=22070
+Type=5
+PicMap=art\items\smalbox2.frm
+PicInv=art\inven\udobreni.frm
+Flags=150994974
+DisableEgg=1
+Stackable=1
+Weight=100
+Volume=1
+SoundId=48
+Cost=10
+Material=1
+
+[Proto] # PID_plkligt2 {Фонарик (актив)}
+ProtoId=22071
+Type=5
+PicMap=art\items\boxbig01.frm
+PicInv=art\inven\plkligt2.FRM
+Flags=134217758
+DisableEgg=1
+Stackable=1
+Weight=520
+Volume=3
+SoundId=48
+Cost=150
+Material=1
+
+[Proto] # PID_TOBACCO {Пятилистник}
+ProtoId=22072
+Type=5
+PicMap=art\items\tobacco.FRM
+PicInv=art\inven\tobbaco.png
+Flags=134217758
+DisableEgg=1
+Stackable=1
+SoundId=48
+Cost=50
 Material=1
 
 [Proto] # PID_RUIN_MAP {Карта местности, на которой отмечены склады.}

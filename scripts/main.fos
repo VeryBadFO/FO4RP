@@ -248,6 +248,10 @@ bool start()
 	SetSendParameter( CR_RELAXED, true );
 	SetSendParameter( CR_TYPING_TIME, true );
 
+    // charsheet
+    SetSendParameter( QST_CHAR_VER, true );
+    SetSendParameter( QST_CHAR_SECRET, true );
+
     // Send item data masks
     // Look fields in fonline.h 'struct Item::ItemData'
     //               SortValue  Info Indicator    PicMapHash       PicInvHash   AnimWaitBase AStay[2] AShow[2] AHide[2]      Flags      Rate LightDist Inten Flags  LightColor    ScriptId TrapValue       Count             Cost                ScriptValues[10]                                                                                                   Other 36 bytes
@@ -612,6 +616,24 @@ bool critter_stealing( Critter& cr, Critter& thief, Item& item, uint count )
     return success;
 }
 
+bool subWater( Critter& cr, Item@ item )
+{
+	Item@ water = valid( item ) ? @item : cr.GetItem( PID_BOTTLE_FULL, -1 );
+	if( !valid(water) )
+		@water = cr.GetItem( PID_GLASS_BOTTLE_FULL, -1 );
+	
+	if( !valid(water) )
+		return false;
+	
+	if( water.GetProtoId() == PID_BOTTLE_FULL )
+		cr.AddItem( PID_BOTTLE_EMPTY, 1 );
+	else
+		cr.AddItem( PID_BOTTLE_GLASS, 1 );
+
+	_SubItem( water, 1 );
+	return true;
+}
+
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 // Call on something critter use item.
 bool critter_use_item( Critter& cr, Item& item, Critter@ targetCr, Item@ targetItem, Scenery@ targetScen, uint param )
@@ -630,6 +652,41 @@ bool critter_use_item( Critter& cr, Item& item, Critter@ targetCr, Item@ targetI
 	cr.Wait(GetProtoTime(item.Proto, 0, cr));
 
 	if( Mining( cr, item, targetItem ) ) return true;
+	
+	if( useOnSelf )
+	{
+		if( cr.ParamBase[CR_TEMP] > 0 )
+		{
+			if( subWater( cr, item ) )
+			{
+				cr.ParamBase[CR_TEMP] = 0;
+				cr.Say( SAY_EMOTE_ON_HEAD, "Тушит себя водой" );
+				return true;
+			}
+			else
+			{
+				cr.Say( SAY_NETMSG, "Используйте воду, что бы потушить себя." );
+			}
+		}
+	}
+	else
+	{
+		if( valid( targetCr ) && targetCr.ParamBase[CR_TEMP] > 0 )
+		{
+			if( subWater( cr, item ) )
+			{
+				cr.Say( SAY_EMOTE_ON_HEAD, "Тушит водой" );
+				
+				targetCr.ParamBase[CR_TEMP] = 0;
+				targetCr.Say( SAY_NETMSG, "Вас потушили." );
+				return true;
+			}
+			else
+			{
+				cr.Say( SAY_NETMSG, "Используйте воду, что бы потушить цель." );
+			}
+		}
+	}
 
 	// ================================================== Мио ==================================================
 
@@ -675,7 +732,7 @@ bool critter_use_item( Critter& cr, Item& item, Critter@ targetCr, Item@ targetI
 		uint[] ashes = { PID_ASHES_1, PID_ASHES_2, PID_ASHES_3 };
 		if( valid( targetItem ) && ashes.find( targetItem.GetProtoId() ) != -1 )
 		{
-			cr.Say( SAY_EMOTE_ON_HEAD, "Убирает золу." );
+			cr.Say( SAY_EMOTE_ON_HEAD, "Убирает золу" );
 			DeleteItem(targetItem);
 			return true;
 		}
@@ -3036,7 +3093,10 @@ void critter_init( Critter& cr, bool firstTime )
             case ARMOR_PERK_CHARISMA:
                 cr.StatBase[ ST_CHARISMA_EXT ] -= 1;
                 break;
-            default:
+            case ARMOR_PERK_ANTIRAD:
+                cr.StatBase[ ST_RADIATION_RESISTANCE_EXT ] -= 70;
+                break;				
+			default:
                 break;
             }
             cr.StatBase[ ST_CURRENT_ARMOR_PERK ] = 0;
@@ -3064,6 +3124,9 @@ void critter_init( Critter& cr, bool firstTime )
     ChangeCritterSpeed( cr );
 
     manager_critter_init( cr, firstTime );
+
+    # pragma bindfunc "void DllCritterInit(Critter&, bool) -> rust_dll/server.dll critter_init"
+    DllCritterInit(cr, firstTime);
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////

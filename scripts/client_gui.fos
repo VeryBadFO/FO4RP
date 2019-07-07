@@ -691,23 +691,23 @@ class GUIScreen : IGUIScreenOpt
                         return true;
                     }
                 }
-                else
-                {
-                    CritterCl @ choo = GetChosen();
-                    if( choo.Param[ QST_GAMEMODE ] == 1 )
-                    {
-                        uint16    x = __MouseX, y = __MouseY;
-                        CritterCl @cr = GetMonitorCritter( x, y );
-                        if( @cr != null )
-                        {
-                            if( cr.Id == choo.Id )
-                                ShowScreen( CLIENT_SCREEN_TEACH, 0, 0, 0 );
-                            else
-                                RunServerScriptUnsafe( "gm@unsafe_ADVENTURER_PANNEL_CRITTER", cr.Id, 0, 0, null, null );                            // панель действий с игроком
-                            return true;
-                        }
-                    }
-                }
+                // else
+                // {
+                    // CritterCl @ choo = GetChosen();
+                    // if( choo.Param[ QST_GAMEMODE ] == 1 )
+                    // {
+                        // uint16    x = __MouseX, y = __MouseY;
+                        // CritterCl @cr = GetMonitorCritter( x, y );
+                        // if( @cr != null )
+                        // {
+                            // if( cr.Id == choo.Id )
+                                // ShowScreen( CLIENT_SCREEN_TEACH, 0, 0, 0 );
+                            // else
+                                // RunServerScriptUnsafe( "gm@unsafe_ADVENTURER_PANNEL_CRITTER", cr.Id, 0, 0, null, null );                            // панель действий с игроком
+                            // return true;
+                        // }
+                    // }
+                // }
             }
             else if( ( click == MOUSE_CLICK_MIDDLE || ( __mouse2Pressed && click == MOUSE_CLICK_LEFT ) && !__mobhotkeys ) && GetCurrentCursor() == CURSOR_DEFAULT )
             {
@@ -1050,6 +1050,14 @@ class GUIScreen : IGUIScreenOpt
 				return true;
 			}
 
+			// ћио.
+			// јвтоиспользование дверей.
+			if( key == DIK_E && !__ConsoleActive && !KeyPressed[ DIK_LCONTROL ] )
+			{
+				RunServerScriptUnsafe( "general_unsafe@unsafe_OpenDoor", 0, 0, 0, "", null );
+				return true;
+			}
+
 			if( !__ConsoleActive && !KeyPressed[ DIK_LCONTROL ] && !KeyPressed[ DIK_LMENU ] )
 			{
 				int[][] keybinds = {
@@ -1155,6 +1163,7 @@ class GUIScreen : IGUIScreenOpt
 				switch( key )
 				{
 					case( DIK_G ): RunServerScriptUnsafe( "test@unsafe_testBag",  0, 0, 0, null, null ); return true;
+					case( DIK_B ): RunServerScriptUnsafe( "test@unsafe_getCost",  0, 0, 0, null, null ); return true;
 					
 					case( DIK_A ): RunServerScriptUnsafe( "general_unsafe@unsafe_sleep", 0, 0, 0, null, null ); return true;
 					case( DIK_S ): RunServerScriptUnsafe( "general_unsafe@unsafe_sleep", 1, 0, 0, null, null ); return true;
