@@ -1,0 +1,87 @@
+class Segment_init_environment : Segment
+{
+	string info() override
+	{
+		return "Инициализация условий совершения атаки."; //Crime scene data
+	}
+	
+	uint8 getSubType( int skillNum )
+	{
+		switch( skillNum ) 
+		{
+			case( SK_SMALL_GUNS ):
+			case( SK_BIG_GUNS ):
+			case( SK_ENERGY_WEAPONS ):
+				return WS_GUN;
+				
+			case( SK_THROWING ):
+				return WS_THROWING;
+
+			case( SK_MELEE_WEAPONS ):
+				return WS_MELEE;
+		}
+		
+		return WS_UNARMED;
+	}
+	
+	int getMaxDist( int skillNum, Critter@ attacker, ProtoItem@ weapon, uint8 use )
+	{
+		int result = _WeaponMaxDist( weapon, use );
+		
+		if( skillNum == SK_THROWING )
+			result = MIN( result, 3 * MIN( int(10), attacker.Stat[ ST_STRENGTH ] ) );
+		
+		return result;
+	}
+	
+	void run( int path ) override
+	{
+		//Этот нечеловеческий пиздец нужно растащить по различным сегментам. Пока что я просто переношу оригинальную логику комбача.
+	
+		GET( "attacker"  ,   Critter, @attacker );
+		GET( "skillNum"  ,  	 int, skillNum );
+		GET( "weapon"    , ProtoItem, @weapon );
+		GET( "weaponMode",     uint8, weaponMode );
+		GET( "ammo"      , ProtoItem, @ammo );
+
+		SET( "use"          , uint8 , use	       , _WeaponModeUse( weaponMode ) );
+		SET( "weapPid"	    , uint16, weapPid	   , weapon.ProtoId );
+		SET( "weaponSubtype", uint8 , weaponSubtype, getSubType( skillNum ) );
+		SET( "dmgType"	    , int   , dmgType	   , _WeaponDmgType( weapon, use ) );
+
+		SET( "ammoPid"  , uint16,   ammoPid, valid( ammo ) ? ammo.ProtoId : 0 );
+		SET( "ammoRound", uint16, ammoRound, _WeaponRound( weapon, use ) );
+		SET( "isBurst"  ,	bool,   isBurst, ammoRound > 1 );
+
+		data.set( "aim"       , isBurst ? HIT_LOCATION_UNCALLED : _WeaponModeAim( weaponMode ) )
+			.set( "wpnMaxDist", getMaxDist( skillNum, attacker, weapon, use ) )
+			.set( "realWeapon", _CritGetItemHand( attacker ) )
+			.set( "weaponPerk", weapon.Weapon_Perk )
+
+			.set( "map"         , attacker.GetMap() )
+			.set( "attacker pos", Position( attacker ) )
+
+			//Каждый отвечает за свою часть логики, нужно растащить по разным сегментам.
+			.set( "wpnIsRemoved"  ,	_WeaponRemove( weapon, use ) )
+			.set( "isRanged"      ,	oneOf2( weaponSubtype, WS_THROWING, WS_GUN ) )
+			.set( "isHthAttack"   ,	oneOf2( weaponSubtype, WS_MELEE, WS_UNARMED ) )
+			.set( "isUnarmed"     ,	weapon.Weapon_IsUnarmed )
+			.set( "isGrenade"     ,	weaponSubtype == WS_THROWING && dmgType != DAMAGE_NORMAL )
+			.set( "isFlamethrower", oneOf2( ammoPid, PID_FLAMETHROWER_FUEL, PID_FLAMETHROWER_FUEL_MK_II ) || weapPid == PID_FIRE_GECKO_FLAME_WEAPON )
+			.set( "isShotgun"	  ,	oneOf2( ammoPid, PID_SHOTGUN_SHELLS, PID_12g_LOW ) )
+			.set( "isRocket"	  ,	oneOf4( ammoPid, PID_EXPLOSIVE_ROCKET, PID_ROCKET_AP, PID_ROBO_ROCKET_AMMO, PID_GRENADELAUNCHER_AMMO ) )
+			.set( "eyeDamage"	  ,	attacker.Damage[ DAMAGE_EYE ] != 0 )
+			.set( "crIsPlayer"    ,	attacker.IsPlayer() )
+			
+			//Не нужны здесь, т.к. объявляются и используются в других сегментах логики.
+			.set( "critfailFlags", 0 )
+			.set( "isHit"	   , false )
+			.set( "isCritical" , false )
+			.set( "hitRandomly", false )
+			.set( "isSneak"	   , false )
+			.set( "useNormal"  , false )
+			.set( "useHex"	   , false )
+			.set( "acmod"      , 0 )
+			;
+	}
+}

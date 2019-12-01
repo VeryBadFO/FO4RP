@@ -173,6 +173,15 @@
 // check apregen.fos
 // #define _GetApRegen 				 # (cr) ( (cr.Stat[ST_AGILITY] * 125)) //this shit is no longer needed
 
+#define oneOf2	# ( val, v1, v2 								)		val == v1 || val == v2
+#define oneOf3	# ( val, v1, v2, v3 							)		val == v1 || val == v2 || val == v3
+#define oneOf4	#( val, v1, v2, v3, v4  						)		val == v1 || val == v2 || val == v3 || val == v4
+#define oneOf5	#( val, v1, v2, v3, v4, v5  					)		val == v1 || val == v2 || val == v3 || val == v4 || val == v5 
+#define oneOf6	#( val, v1, v2, v3, v4, v5, v6  				)		val == v1 || val == v2 || val == v3 || val == v4 || val == v5 || val == v6
+#define oneOf7	#( val, v1, v2, v3, v4, v5, v6, v7  			) 		val == v1 || val == v2 || val == v3 || val == v4 || val == v5 || val == v6 || val == v7
+#define oneOf8	#( val, v1, v2, v3, v4, v5, v6, v7, v8  		)		val == v1 || val == v2 || val == v3 || val == v4 || val == v5 || val == v6 || val == v7 || val == v8
+#define oneOf9	#( val, v1, v2, v3, v4, v5, v6, v7, v8, v9	 	)		val == v1 || val == v2 || val == v3 || val == v4 || val == v5 || val == v6 || val == v7 || val == v8 || val == v9
+#define oneOf10	#( val, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10 )		val == v1 || val == v2 || val == v3 || val == v4 || val == v5 || val == v6 || val == v7 || val == v8 || val == v9 || val == v10
 
 // logging
 #define _CrLogMsg                    # ( cr, text )( cr.Say( SAY_NETMSG, text ) )

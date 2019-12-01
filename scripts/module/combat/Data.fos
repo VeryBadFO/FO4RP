@@ -1,0 +1,31 @@
+class Data
+{
+	dictionary dict;
+
+	Data() { }
+	
+	///Если подумать - то это толком и не нужно, если есть препроцессорные возможности обработки кода.
+	//Дефайним препроцессорную функцию для сокращения кода и увеличения его гибкости.
+	#define COPY_PASTED_FUNC	#( TYPE, VAL )	\
+	Data@ set( string name, TYPE VAL )	\
+	{									\
+		dict.set( name, VAL );			\
+		DebugLog( ".set " + name, 2 );	\
+		return this;					\
+	}									\
+	
+	COPY_PASTED_FUNC( bool, val )
+	COPY_PASTED_FUNC( int, val )
+	COPY_PASTED_FUNC( uint, val )
+	COPY_PASTED_FUNC( uint8, val )
+	COPY_PASTED_FUNC( uint16, val )
+	COPY_PASTED_FUNC( float, val )
+	COPY_PASTED_FUNC( string, val )
+	
+	COPY_PASTED_FUNC( Map, @link )
+	COPY_PASTED_FUNC( Critter, @link )
+	COPY_PASTED_FUNC( Item, @link )
+	COPY_PASTED_FUNC( ProtoItem, @link )
+
+	COPY_PASTED_FUNC( Position, @link )
+}

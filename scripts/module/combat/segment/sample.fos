@@ -1,0 +1,31 @@
+class SegmentSample : Segment
+{
+	string info() override
+	{
+		return "Тестовый сегмент логики.";
+	}
+	
+	void run( int path ) override
+	{
+		GET( "attacker", Critter, @attacker );
+		GET( "target"  , Critter, @target );
+		GET( "weapon"  , ProtoItem, @weapon );
+		GET( "ammo"    , ProtoItem, @ammo );
+		GET( "mode"    , uint8, mode );
+		GET( "x"	   , uint16, x );
+		GET( "y"	   , uint16, y );
+		
+		uint targetID = valid( target ) ? target.Id : 0;
+		uint weaponPID = valid( weapon ) ? weapon.ProtoId : 0;
+		uint ammoPID = valid( ammo ) ? ammo.ProtoId : 0;
+		string text = 
+			"#" + attacker.Id + " on " + 
+			"#" + targetID + " at " + 
+			"[" + x + ", " + y + "] with weapon PID " + 
+			"#" + weaponPID + " and ammo PID " + 
+			"#" + ammoPID + " at weapon mode " + 
+			"#" + mode;
+		
+		Log( text );
+	}
+}

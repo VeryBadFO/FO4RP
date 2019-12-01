@@ -1,0 +1,11 @@
+class SegmentSave : Segment
+{
+	string info() override
+	{
+		return "Saved: ";
+	}
+	
+	void run( int path ) override
+	{
+	}
+}

@@ -1,0 +1,36 @@
+class Segment : ProtoSegment
+{
+	string info()
+	{
+		return "Пустой кусок сегментированной логики.";
+	}
+	
+	void start( Logic@ owner )
+	{
+		@this.owner = owner;
+		
+		if( !valid(data) ) 
+		{ //TODO: Remove warning about 'The operand is implicitly converted to handle in order to compare'
+			Log( "No data assigned." );
+			return;
+		}
+
+		run( check() );
+	}
+	
+	int check()
+	{
+		return ERROR;
+	}
+	
+	void run( int path )
+	{
+		Log( info() );
+	}
+
+	void halt()
+	{
+		Log( info() );
+		owner.halted = true;
+	}
+}

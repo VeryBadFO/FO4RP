@@ -1,0 +1,36 @@
+class ProtoSegment
+{
+	Logic@ owner;
+
+	void invoke( Segment@ segment, int index = ERROR )
+	{
+		if( !valid( owner ) || !valid( owner.segments ) )
+		{
+			Log("Invalid owner or segment.");
+			return;
+		}
+		
+		if( index == ERROR )
+			owner.segments.add( segment );
+		else
+			Log("Not implemented exception.");
+	}
+	
+	Data@ _data;
+	Data@ data { get { 
+			if( !valid( _data ) ) 
+				@_data = getData(); 
+			return _data; 
+	} 	}
+	
+	Data@ getData()
+	{
+		if( !valid( owner ) )
+		{
+			Log( "Invalid owner." );
+			return null;
+		}
+		
+		return owner.data;
+	}
+}

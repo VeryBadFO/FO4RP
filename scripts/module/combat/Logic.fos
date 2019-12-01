@@ -1,0 +1,60 @@
+class Logic
+{
+	bool halted;
+	
+	Data data;	
+	Segments segments;
+	
+	Logic( Data data )
+	{
+		halted = false;
+		
+		this.data = data;
+		
+		segments = Segments( this );
+		
+		start();
+	}
+	
+	void start() //overridable
+	{
+		if( load() )
+			run();
+	}
+	
+	bool load()  //overridable
+	{
+		return false;
+	}
+	
+	void run() //overridable
+	{
+		for( uint i = 0; i < segments.count; i++ )
+		{
+			if( halted )
+			{
+				Log( "Is halted at #" + i + "." );
+				break;
+			}
+			
+			segments.run( i );
+		}
+	}
+}
+
+class CombatLogic : Logic
+{
+	CombatLogic( Data data ) { super( data ); }
+
+	bool load() override
+	{
+		segments
+			//.add( SegmentSample() )
+			.add( Segment_has_a_target() )
+			.add( Segment_flare_gun_shot() )
+			.add( Segment_init_environment() )
+			;
+			
+		return true;
+	}
+}

@@ -1,0 +1,35 @@
+class Segments
+{
+	Logic@ owner;
+	Segment@[] segment;
+	
+	Segments( Logic@ owner )
+	{
+		@this.owner = owner;
+	}
+	
+	Segments@ add( Segment@ item )
+	{
+		segment.insertLast( item );		
+		return this;
+	}
+	
+	uint count { get { return segment.length(); } }
+	
+	void run( uint index )
+	{
+		if( index < 0 || index >= count )
+		{
+			Log( "Out of bounds: " + index + " / " + count );
+			return;
+		}
+		
+		if( !valid( owner ) )
+		{
+			Log( "Invalid owner." );
+			return;
+		}
+		
+		segment[index].start( owner );
+	}
+}

@@ -1,4 +1,4 @@
-//~run test switchDebugMode val 0 0
+//~run debug switchDebugMode val 0 0
 //import void switchDebugMode( Critter& cr, int val, int, int ) from "debug";
 void switchDebugMode( Critter& cr, int val, int, int ) //exported
 {
@@ -8,8 +8,8 @@ void switchDebugMode( Critter& cr, int val, int, int ) //exported
 	string text = "Режим отлова багов ";
 	if( val == 0 )
 	{
-		text += "use_skill & use_item " + ( var.GetValue() == 1 ? "в" : "вы" ) + "ключен.";
 		var.opAssign( CLAMP( 1 - var.GetValue(), 0, 1 ) );
+		text += "use_skill & use_item " + ( var.GetValue() == 1 ? "в" : "вы" ) + "ключен.";
 	}
 	else 
 	{
@@ -43,6 +43,7 @@ void DebugLog( string text ) //export
 //import void DebugLog( string text, int level ) from "debug";
 void DebugLog( string text, int level ) //export
 {
+	//Log( "Вызван лог '" + text + "' с уровнем " + level + "." ); //Для срочных тестов системы.
 	if( isDebugging( level ) )
 		Log( text );
 }

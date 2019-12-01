@@ -1,0 +1,22 @@
+import bool FlareGunShot( Critter& cr ) from "item";                                                            // pm added flare gun
+
+class Segment_flare_gun_shot : Segment
+{
+	string info() override
+	{
+		return "Проверка стрельбы из сигнальной ракетникы.";
+	}
+	
+	void run( int path ) override
+	{
+		GET( "attacker", Critter, @attacker );
+		GET( "weapon"  , ProtoItem, @weapon );
+		GET( "mode"    , uint8, mode );
+		
+		if( weapon.ProtoId == PID_FLARE_GUN && mode == 1 )
+		{
+			FlareGunShot( attacker );
+			halt();
+		}
+	}
+}

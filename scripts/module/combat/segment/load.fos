@@ -1,0 +1,11 @@
+class SegmentLoad : Segment
+{
+	string info() override
+	{
+		return "Loaded: ";
+	}
+	
+	void run( int path ) override
+	{
+	}
+}

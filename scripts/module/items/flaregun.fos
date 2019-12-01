@@ -1,0 +1,73 @@
+//TODO: Сделать нормально, сейчас запуск флаера бесполезен.
+#define FLARE_BURN_TIME    ( 1000 )
+
+// import bool GetPlayerRadius(Critter@ player, Critter@[]@ crs, uint16 radius) from "main";
+import uint GetPlayers( Critter& cr, uint16 radius, bool square, Critter@[]& crs ) from "manager";
+
+string dataName;
+
+bool ShowFlare( Critter@[] crs )
+{
+    uint8 length = crs.length();
+    Map @ map = crs[ length - 1 ].GetMap();
+    if( !valid( map ) )
+        return false;
+    Location @ loc = map.GetLocation();
+    if( !valid( loc ) || loc.AutoGarbage == false )
+    {
+        crs[ crs.length() - 1 ].Say( SAY_NETMSG, "Запускать здесь ракету бессмысленно, найдите более подходящее место." );
+        return false;
+    }
+
+    uint flareLocId = loc.Id;
+    CreateTimeEvent( __FullSecond + FLARE_BURN_TIME, "e_ShowFlare", flareLocId, false );
+    return true;
+}
+
+uint e_ShowFlare( uint[] @ values )
+{
+    Location @ loc = GetLocation( values[ 0 ] );
+    if( !valid( loc ) )
+        return 0;
+    return 0;
+}
+
+void _FlareGun( Item& item, bool firstTime )
+{
+    item.SetEvent( ITEM_EVENT_SKILL, "e_FlareGunSkill" );
+}
+
+bool e_FlareGunSkill( Item& item, Critter& cr, int skill )
+{
+    if( skill != SK_TRAPS )
+        return false;
+
+    return FlareGunUse( cr, item );
+}
+
+bool FlareGunShot( Critter& cr )
+{
+	Item@ gun = _CritGetItemHand( cr );
+	if( !valid( gun ) ) return false;
+	
+	return FlareGunUse( cr, gun );
+}
+
+bool FlareGunUse( Critter& cr, Item& item )
+{
+    if( item.AmmoCount > 0 )
+    {
+        Critter@[] crs;
+        GetGlobalMapCritters( cr.WorldX, cr.WorldY, 200, FIND_LIFE | FIND_ONLY_PLAYERS, crs );
+        crs.insertLast( cr );
+		
+        if( !ShowFlare( crs ) )
+            return false;
+		
+        item.AmmoCount -= 1;
+        item.Update();
+		
+        cr.Say( SAY_NETMSG, "Вы запустили сигнальную ракету." );
+    }
+    return true;
+}

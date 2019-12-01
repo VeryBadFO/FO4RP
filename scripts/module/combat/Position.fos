@@ -1,0 +1,30 @@
+class Position
+{
+	bool isGlobal;
+	uint16 x;
+	uint16 y;
+	Map@ map;
+	
+	Position( Critter@ cr )	{ if( valid( cr ) ) Create( cr.GetMap(), cr.HexX, cr.HexY ); }
+	Position( Item@ item )	{ if( valid( item ) ) Create( item.MapId, item.HexX, item.HexY ); }
+	
+	Position( uint mapID = 0, uint16 x = 0, uint16 y = 0 )	{ Create( mapID, x, y ); }
+	Position( Map@ map = null, uint16 x = 0, uint16 y = 0 )	{ Create( map, x, y ); }
+	
+	Position@ Create( uint mapID = 0, uint16 x = 0, uint16 y = 0 ) { return Position( GetMap( mapID ), x, y ); }
+	Position@ Create( Map@ map = null, uint16 x = 0, uint16 y = 0 )
+	{
+		isGlobal  = !valid( map );
+		
+		@this.map = map;
+		this.x = x;
+		this.y = y;		
+
+		return this;
+	}
+	
+	string toString()
+	{
+		return ( isGlobal ? "[Global] " : "" ) + "Map #" + ( valid(map) ? map.Id : 0 ) + " [" + x + ", " + y + "]";
+	}
+}

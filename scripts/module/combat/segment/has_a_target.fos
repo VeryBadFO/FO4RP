@@ -1,0 +1,29 @@
+class Segment_has_a_target : Segment
+{
+	string info() override
+	{
+		return "ѕроверка, наличи€ цели или координат атаки.";
+	}
+	
+	void run( int path ) override
+	{
+		GET( "attacker", Critter, @attacker );
+		GET( "target"  , Critter, @target );
+		GET( "x"	   , uint16, x );
+		GET( "y"	   , uint16, y );
+		
+		//redo that:
+		Position@ pos;
+		if( valid( target ) )
+			@pos = Position( target );
+		else
+		{
+			Map@ map = valid( attacker ) ? attacker.GetMap() : null;
+			@pos = Position( map, x, y );
+		}
+		_SET( "target pos", pos );
+		
+		if( pos.isGlobal )
+			halt();
+	}
+}

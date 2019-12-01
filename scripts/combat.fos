@@ -19,8 +19,6 @@ import void Log_Killings( Critter& player, int target, int param1, int param2, s
 import void hearshot( Critter& cr, ProtoItem& weapon, uint8 weaponMode ) from "rp_combat"; //Выстрелы на карте
 
 import void ChangeCritterSpeed( Critter& cr ) from "speed";                                                                // pm added
-import bool FlareGunUse( Critter& cr, Item& item ) from "item";                                                            // pm added flare gun
-
 
 // binyan
 /*---------------------------Ball---------------------------------------------*/
@@ -244,18 +242,22 @@ int getFullSkill( Critter& cr, Critter@ target, int skillNum, uint8 weaponSubtyp
 	return skillVal;
 }
 
+void foo( int& val ) { val = 100; }
 
+#include "combat_new.fos"
 
 void CombatAttack( Critter& cr, Critter@ target, ProtoItem& weapon, uint8 weaponMode, ProtoItem@ ammo, uint16 hexX, uint16 hexY ) // Export
 {
-	//newCombat test = newCombat( cr, target, weapon, weaponMode, ammo, hexX, hexY );
+	Logic test = CombatLogic( Data()
+		.set( "attacker", cr )
+		.set( "target", target )
+		.set( "weapon", weapon )
+		.set( "mode", weaponMode )
+		.set( "ammo", ammo )
+		.set( "x", hexX )
+		.set( "y", hexY ) 
+	);
 	
-	int point = 0;
-	
-    if( not valid( target ) && hexX == 0 && hexY == 0 )
-        return;
-
-    uint yyy = 0;
 
     uint8 use = _WeaponModeUse( weaponMode );
     uint8 aim = _WeaponModeAim( weaponMode );
@@ -264,13 +266,7 @@ void CombatAttack( Critter& cr, Critter@ target, ProtoItem& weapon, uint8 weapon
     int   wpnMaxDist = _WeaponMaxDist( weapon, use );
     int   skillNum = _WeaponSkill( weapon, use );
 
-    if( weapon.ProtoId == PID_FLARE_GUN && weaponMode == 1 )
-    {
-        FlareGunUse( cr, realWeapon );
-        return;
-    }// pm added flare gun check
-
-    if( skillNum == SK_THROWING )
+	if( skillNum == SK_THROWING )
         wpnMaxDist = MIN( wpnMaxDist, 3 * MIN( int(10), cr.Stat[ ST_STRENGTH ] ) );
 		//wpnMaxDist = MIN( wpnMaxDist, 3 * MIN( int(10), ( cr.Stat[ ST_STRENGTH ] + 2 * cr.Perk[ PE_HEAVE_HO ] ) ) );
 

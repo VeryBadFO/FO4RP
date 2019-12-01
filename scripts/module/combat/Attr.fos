@@ -1,0 +1,105 @@
+/*
+	// COPY_PASTED_FUNC( bool, val )
+	// COPY_PASTED_FUNC( int, val )
+	// COPY_PASTED_FUNC( float, val )
+	// COPY_PASTED_FUNC( string, val )
+	
+	Critter@ get( string name )	
+	{							
+		Critter@ link;			
+		dict.get( name, @link );
+		return link;				
+	}							
+
+	//Переопределяем препроцессор синтаксис ф-ии для ссылочных данных:
+	// #define GET_FUNC	#( TYPE, VAL )	\
+	// TYPE get( string name )				\
+	// {									\
+		// TYPE VAL;						\
+		// dict.get( name, @ VAL );		\
+		// return VAL;						\
+	// }									\
+
+	// GET_FUNC( Critter@, link )
+	// GET_FUNC( Item@, link )
+	// GET_FUNC( ProtoItem@, link )
+*/	
+
+class DataExt : Data
+{
+	Attr@ attr( string name )
+	{
+		if( !dict.exists( name ) )
+		{
+			Log( "Attr '" + name + "' not found." );
+			return null;
+		}
+		
+		return Attr( this, name );
+	}
+}
+
+class ProtoSegmentExt : ProtoSegment
+{
+	Attr@ attr( string name )
+	{
+		if( !exist(data) )
+		{
+			Log( "No data found. " );
+			return null;
+		}
+		
+		return data.attr( name );
+	}
+}
+
+#ifdef ATTRTYPE
+
+class Attr
+{
+	string name;
+	Data@ owner;
+	
+	TYPE val { 
+		get { return get(); } 
+		set	{ set( value ); }		
+	}
+	
+	Attr( Data@ owner, string name )
+	{
+		@this.owner = owner;
+		this.name = name;
+	}
+	
+	bool has()
+	{
+		return owner.dict.exists( name, result );
+	}
+	
+	void update()
+	{
+		owner.dict.set( name, text );
+	}
+
+	TYPE get()
+	{
+		TYPE result;
+		owner.dict.get( name, result );
+		return result;
+	}
+
+	void set( TYPE val )
+	{
+		this.val = val;
+		update();
+	}
+	
+	//Тут особые обработчики
+	// void add( string text )
+	// {
+		// this.text += text;
+		// update();
+	// }
+}
+
+#endif
